@@ -1270,36 +1270,44 @@
         let chartInstance = null;
 
         // CAMBIAR MES
-        function cambiarMes(mes) {
-            document.getElementById('loadingOverlay').classList.add('active');
-            
-            setTimeout(() => {
-                mesSeleccionado = mes;
-                document.querySelectorAll('.mes-tab').forEach(tab => tab.classList.remove('active'));
-                event.target.closest('.mes-tab').classList.add('active');
-                
-                const d = datosPorMes[mes];
-                document.getElementById('mesActual').textContent = d.mes;
-                document.getElementById('panoramaMes').textContent = d.mes.charAt(0) + d.mes.slice(1).toLowerCase();
-                document.getElementById('capturaGlobal').textContent = d.captura + '%';
-                document.getElementById('progressBar').style.width = d.captura + '%';
-                document.getElementById('faltantesTotales').textContent = d.faltantesTotales;
-                document.getElementById('panoramaFaltantes').textContent = d.faltantesTotales;
-                document.getElementById('unidades100').textContent = d.unidades100;
-                document.getElementById('panoramaUnidades100').textContent = d.unidades100;
-                document.getElementById('unidadesRiesgo').textContent = d.unidadesRiesgo;
-                document.getElementById('unidadesCriticas').textContent = d.unidadesCriticas;
-                document.getElementById('incorporados').textContent = d.incorporados;
-                document.getElementById('panoramaVelocidad').textContent = d.incorporados;
-                document.getElementById('panoramaPadron').textContent = d.padron;
-                
-                const mejora = mes === 'NOV' ? '+10.9pp' : mes === 'OCT' ? '+3.9pp' : '0pp';
-                document.getElementById('panoramaMejora').textContent = mejora;
-                
-                document.getElementById('loadingOverlay').classList.remove('active');
-            }, 200);
-        }
-
+function cambiarMes(mes) {
+    const loadingEl = document.getElementById('loadingOverlay');
+    loadingEl.classList.add('active');
+    
+    setTimeout(() => {
+        mesSeleccionado = mes;
+        
+        // Actualizar tabs - CORREGIDO
+        const tabs = document.querySelectorAll('.mes-tab');
+        tabs[0].classList.remove('active'); // SEP
+        tabs[1].classList.remove('active'); // OCT
+        tabs[2].classList.remove('active'); // NOV
+        
+        if (mes === 'SEP') tabs[0].classList.add('active');
+        if (mes === 'OCT') tabs[1].classList.add('active');
+        if (mes === 'NOV') tabs[2].classList.add('active');
+        
+        const d = datosPorMes[mes];
+        document.getElementById('mesActual').textContent = d.mes;
+        document.getElementById('panoramaMes').textContent = d.mes.charAt(0) + d.mes.slice(1).toLowerCase();
+        document.getElementById('capturaGlobal').textContent = d.captura + '%';
+        document.getElementById('progressBar').style.width = d.captura + '%';
+        document.getElementById('faltantesTotales').textContent = d.faltantesTotales;
+        document.getElementById('panoramaFaltantes').textContent = d.faltantesTotales;
+        document.getElementById('unidades100').textContent = d.unidades100;
+        document.getElementById('panoramaUnidades100').textContent = d.unidades100;
+        document.getElementById('unidadesRiesgo').textContent = d.unidadesRiesgo;
+        document.getElementById('unidadesCriticas').textContent = d.unidadesCriticas;
+        document.getElementById('incorporados').textContent = d.incorporados;
+        document.getElementById('panoramaVelocidad').textContent = d.incorporados;
+        document.getElementById('panoramaPadron').textContent = d.padron;
+        
+        const mejora = mes === 'NOV' ? '+10.9pp' : mes === 'OCT' ? '+3.9pp' : '0pp';
+        document.getElementById('panoramaMejora').textContent = mejora;
+        
+        loadingEl.classList.remove('active');
+    }, 250);
+}
         // MODALES
         function abrirModal(titulo, contenido) {
             document.getElementById('modalTitle').textContent = titulo;
