@@ -4,59 +4,71 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DASHLINO - Dashboard Ejecutivo</title>
-    <meta name="description" content="Sistema de Análisis y Control de Contratistas - Grupo México">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
             color: #1f2937;
             -webkit-font-smoothing: antialiased;
         }
-        .loading-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255, 255, 255, 0.95);
-            display: none; align-items: center; justify-content: center;
-            z-index: 9999;
-        }
-        .loading-overlay.active { display: flex; }
-        .spinner {
-            width: 40px; height: 40px;
-            border: 3px solid #f3f4f6;
-            border-top-color: #22c55e;
-            border-radius: 50%;
-            animation: spin 0.6s linear infinite;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
         
-        .header {
+        .dashboard-ejecutivo {
+            min-height: 100vh;
+        }
+        
+        /* HEADER */
+        .dashboard-header {
             background: linear-gradient(135deg, #111827 0%, #1f2937 100%);
             color: white;
             padding: 20px 40px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         }
+        
         .header-content {
             max-width: 1400px;
             margin: 0 auto;
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: space-between;
         }
-        .brand {
+        
+        .brand-title {
             font-size: 28px;
             font-weight: 900;
+            letter-spacing: -0.02em;
             background: linear-gradient(135deg, #ffffff 0%, #d1d5db 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        .subtitle {
+        
+        .brand-subtitle {
             font-size: 12px;
             color: #9ca3af;
+            font-weight: 500;
             margin-top: 4px;
         }
         
+        .date-mes {
+            font-size: 14px;
+            font-weight: 700;
+        }
+        
+        .date-update {
+            font-size: 10px;
+            color: #9ca3af;
+            margin-top: 2px;
+        }
+        
+        /* SELECTOR DE MES */
         .mes-selector {
             max-width: 1400px;
             margin: 0 auto;
@@ -64,88 +76,260 @@
             display: flex;
             gap: 12px;
         }
+        
         .mes-tab {
             flex: 1;
             background: white;
             border: 2px solid #e5e7eb;
             border-radius: 10px;
-            padding: 14px;
+            padding: 14px 16px;
             cursor: pointer;
             transition: all 0.2s;
             text-align: center;
         }
+        
         .mes-tab:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
         }
+        
         .mes-tab.active {
             background: linear-gradient(135deg, #111827 0%, #1f2937 100%);
             box-shadow: 0 6px 20px rgba(17, 24, 39, 0.15);
         }
+        
         .mes-nombre {
             font-size: 11px;
             font-weight: 600;
             color: #6b7280;
             text-transform: uppercase;
+            letter-spacing: 0.05em;
             margin-bottom: 6px;
         }
-        .mes-tab.active .mes-nombre { color: #9ca3af; }
-        .mes-valor {
+        
+        .mes-tab.active .mes-nombre {
+            color: #9ca3af;
+        }
+        
+        .mes-indicador {
             font-size: 22px;
             font-weight: 800;
             color: #111827;
         }
-        .mes-tab.active .mes-valor { color: white; }
         
-        .body {
+        .mes-tab.active .mes-indicador {
+            color: white;
+        }
+        
+        /* DASHBOARD BODY */
+        .dashboard-body {
             max-width: 1400px;
             margin: 0 auto;
             padding: 24px 40px;
         }
         
+        /* LOADING OVERLAY */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+        
+        .loading-overlay.active {
+            display: flex;
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #f3f4f6;
+            border-top-color: #22c55e;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* KPI HERO */
         .kpi-hero {
-            background: white;
+            background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
             border: 2px solid #e5e7eb;
             border-radius: 14px;
             padding: 32px;
             margin-bottom: 24px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
         }
-        .kpi-label {
+        
+        .kpi-hero-label {
             font-size: 13px;
             font-weight: 700;
             color: #6b7280;
             text-transform: uppercase;
+            letter-spacing: 0.06em;
             margin-bottom: 16px;
         }
-        .kpi-value {
+        
+        .kpi-hero-value {
             font-size: 64px;
             font-weight: 900;
             color: #111827;
+            letter-spacing: -0.03em;
             line-height: 1;
             margin-bottom: 20px;
         }
-        .progress-bar {
+        
+        .progress-bar-container {
+            position: relative;
             width: 100%;
             height: 10px;
             background: #f3f4f6;
             border-radius: 5px;
             margin-bottom: 14px;
         }
-        .progress-fill {
+        
+        .progress-bar-fill {
             height: 100%;
             background: linear-gradient(90deg, #22c55e 0%, #16a34a 100%);
             border-radius: 5px;
-            transition: width 1.2s ease;
+            transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 6px rgba(34, 197, 94, 0.3);
         }
         
-        .stats-grid {
+        .progress-bar-objetivo {
+            position: absolute;
+            top: -6px;
+            left: 90%;
+            transform: translateX(-50%);
+        }
+        
+        .objetivo-marker {
+            width: 2px;
+            height: 22px;
+            background: #f59e0b;
+            border-radius: 1px;
+            margin: 0 auto;
+        }
+        
+        .objetivo-label {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 10px;
+            font-weight: 700;
+            color: #f59e0b;
+            white-space: nowrap;
+            background: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        
+        .kpi-hero-stats {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .hero-stat {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #374151;
+        }
+        
+        .hero-stat.proyeccion {
+            padding: 6px 14px;
+            background: #fef3c7;
+            border-radius: 6px;
+        }
+        
+        .hero-stat.aceleracion {
+            padding: 6px 14px;
+            background: #dcfce7;
+            border-radius: 6px;
+        }
+        
+        /* PANORAMA GENERAL - CLICKEABLE */
+        .panorama-general {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 14px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        
+        .panorama-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: #111827;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .panorama-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+        
+        .panorama-item {
+            padding: 16px;
+            background: #f9fafb;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .panorama-item:hover {
+            background: white;
+            border-color: #d1d5db;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transform: translateY(-2px);
+        }
+        
+        .panorama-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #6b7280;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        
+        .panorama-valor {
+            font-size: 24px;
+            font-weight: 800;
+            color: #111827;
+            margin-bottom: 4px;
+        }
+        
+        .panorama-delta {
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        /* ESTADO UNIDADES */
+        .estado-unidades-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
             gap: 16px;
             margin-bottom: 24px;
         }
-        .stat-card {
+        
+        .estado-card {
             background: white;
             border-radius: 10px;
             padding: 20px;
@@ -153,29 +337,63 @@
             transition: all 0.2s;
             cursor: pointer;
         }
-        .stat-card:hover {
+        
+        .estado-card:hover {
             transform: translateY(-3px);
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
         }
-        .stat-number {
+        
+        .estado-card.estado-ok {
+            border-color: #d1fae5;
+            background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
+        }
+        
+        .estado-card.estado-ok:hover {
+            border-color: #22c55e;
+        }
+        
+        .estado-card.estado-riesgo {
+            border-color: #fef3c7;
+            background: linear-gradient(135deg, #ffffff 0%, #fffbeb 100%);
+        }
+        
+        .estado-card.estado-critico {
+            border-color: #fee2e2;
+            background: linear-gradient(135deg, #ffffff 0%, #fef2f2 100%);
+        }
+        
+        .estado-card.estado-contratos {
+            border-color: #e0e7ff;
+            background: linear-gradient(135deg, #ffffff 0%, #f5f7ff 100%);
+        }
+        
+        .estado-card.estado-nuevos {
+            border-color: #e0f2fe;
+            background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);
+        }
+        
+        .estado-numero {
             font-size: 32px;
             font-weight: 900;
             color: #111827;
             margin-bottom: 8px;
         }
-        .stat-label {
+        
+        .estado-label {
             font-size: 12px;
             font-weight: 700;
             color: #374151;
             text-transform: uppercase;
             margin-bottom: 4px;
         }
-        .stat-detail {
+        
+        .estado-detalle {
             font-size: 11px;
             color: #6b7280;
         }
         
-        .concentracion {
+        /* CONCENTRACIÓN 80/20 */
+        .concentracion-80-20 {
             background: white;
             border: 2px solid #fef3c7;
             border-radius: 14px;
@@ -183,12 +401,15 @@
             margin-bottom: 24px;
             background: linear-gradient(135deg, #ffffff 0%, #fffbeb 100%);
         }
-        .concentracion-title {
+        
+        .concentracion-header {
             font-size: 18px;
             font-weight: 800;
+            color: #111827;
             margin-bottom: 16px;
         }
-        .concentracion-bar {
+        
+        .concentracion-barra {
             width: 100%;
             height: 36px;
             background: #f3f4f6;
@@ -196,6 +417,7 @@
             overflow: hidden;
             margin-bottom: 14px;
         }
+        
         .concentracion-fill {
             height: 100%;
             background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%);
@@ -207,12 +429,14 @@
             color: white;
             transition: width 1.5s ease;
         }
+        
         .top4-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 14px;
             margin-bottom: 14px;
         }
+        
         .top4-item {
             background: white;
             padding: 14px;
@@ -221,24 +445,28 @@
             cursor: pointer;
             transition: all 0.2s;
         }
+        
         .top4-item:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(217, 119, 6, 0.2);
             border-color: #f59e0b;
         }
+        
         .top4-nombre {
             font-size: 12px;
             font-weight: 600;
             color: #374151;
             margin-bottom: 6px;
         }
+        
         .top4-numero {
             font-size: 22px;
             font-weight: 800;
             color: #d97706;
         }
+        
         .concentracion-footer {
-            padding: 10px;
+            padding: 10px 14px;
             background: #fef3c7;
             border-radius: 6px;
             text-align: center;
@@ -247,24 +475,127 @@
             color: #92400e;
         }
         
-        .chart-card {
+        /* GRÁFICA */
+        .card-grafica {
             background: white;
             border: 2px solid #e5e7eb;
             border-radius: 14px;
             padding: 24px;
             margin-bottom: 24px;
         }
-        .chart-title {
+        
+        .card-header {
             font-size: 18px;
             font-weight: 800;
             margin-bottom: 20px;
+            color: #111827;
         }
+        
         .chart-container {
             height: 280px;
             position: relative;
         }
         
-        .modal {
+        /* MEJORAS Y DETERIOROS */
+        .evolucion-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .evolucion-card {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 14px;
+            padding: 20px;
+        }
+        
+        .evolucion-mejoras {
+            border-color: #d1fae5;
+            background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
+        }
+        
+        .evolucion-deterioros {
+            border-color: #fee2e2;
+            background: linear-gradient(135deg, #ffffff 0%, #fef2f2 100%);
+        }
+        
+        .evolucion-header {
+            font-size: 15px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #f3f4f6;
+        }
+        
+        .evolucion-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: white;
+            border-radius: 6px;
+            border: 1px solid #e5e7eb;
+            margin-bottom: 8px;
+        }
+        
+        .evolucion-nombre {
+            font-size: 12px;
+            font-weight: 600;
+            color: #374151;
+        }
+        
+        .delta-badge {
+            padding: 4px 8px;
+            border-radius: 5px;
+            font-size: 10px;
+            font-weight: 700;
+        }
+        
+        .delta-positivo {
+            background: #dcfce7;
+            color: #166534;
+        }
+        
+        .delta-negativo {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .deterioro-alerta {
+            background: #fee2e2;
+            border: 2px solid #dc2626;
+            animation: pulse 2s infinite;
+        }
+        
+        .btn-accion {
+            width: 100%;
+            padding: 8px 12px;
+            background: #dc2626;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 8px;
+        }
+        
+        .btn-accion:hover {
+            background: #b91c1c;
+            transform: translateY(-1px);
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.85; }
+        }
+        
+        /* MODAL */
+        .modal-overlay {
             display: none;
             position: fixed;
             top: 0;
@@ -276,7 +607,11 @@
             align-items: center;
             justify-content: center;
         }
-        .modal.active { display: flex; }
+        
+        .modal-overlay.active {
+            display: flex;
+        }
+        
         .modal-content {
             background: white;
             border-radius: 14px;
@@ -286,7 +621,20 @@
             max-height: 85vh;
             overflow-y: auto;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.3s ease;
         }
+        
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
         .modal-header {
             display: flex;
             justify-content: space-between;
@@ -295,10 +643,13 @@
             padding-bottom: 14px;
             border-bottom: 2px solid #f3f4f6;
         }
+        
         .modal-title {
             font-size: 20px;
             font-weight: 800;
+            color: #111827;
         }
+        
         .modal-close {
             width: 32px;
             height: 32px;
@@ -308,857 +659,1012 @@
             cursor: pointer;
             font-size: 18px;
             color: #6b7280;
+            transition: all 0.2s;
         }
+        
+        .modal-close:hover {
+            background: #e5e7eb;
+        }
+        
         .modal-list {
             display: flex;
             flex-direction: column;
             gap: 10px;
         }
-        .modal-item {
-            padding: 12px;
+        
+        .modal-list-item {
+            padding: 12px 14px;
             background: #f9fafb;
             border-radius: 8px;
             border: 1px solid #e5e7eb;
             display: flex;
             justify-content: space-between;
+            align-items: center;
             cursor: pointer;
             transition: all 0.2s;
         }
-        .modal-item:hover {
+        
+        .modal-list-item:hover {
             background: white;
             border-color: #d1d5db;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
         }
-        .badge {
+        
+        .modal-list-item.sin-faltantes {
+            cursor: default;
+        }
+        
+        .modal-list-item.sin-faltantes:hover {
+            background: #f9fafb;
+            border-color: #e5e7eb;
+            box-shadow: none;
+        }
+        
+        .modal-list-item-nombre {
+            font-size: 13px;
+            font-weight: 600;
+            color: #374151;
+        }
+        
+        .modal-list-item-badge {
             padding: 4px 10px;
+            background: #dcfce7;
+            color: #166534;
             border-radius: 5px;
             font-size: 11px;
             font-weight: 700;
         }
-        .badge-ok { background: #dcfce7; color: #166534; }
-        .badge-warning { background: #fef3c7; color: #92400e; }
-        .badge-error { background: #fee2e2; color: #991b1b; }
+        
+        .explicacion-box {
+            padding: 16px;
+            background: #f0f9ff;
+            border-radius: 8px;
+            border: 1px solid #bae6fd;
+            margin-bottom: 16px;
+        }
+        
+        .explicacion-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #0c4a6e;
+            margin-bottom: 8px;
+        }
+        
+        .explicacion-text {
+            font-size: 13px;
+            color: #075985;
+            line-height: 1.6;
+        }
+        
+        /* TABLA DE CONTRATOS */
+        .contratos-tabla {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+        }
+        
+        .contratos-tabla thead {
+            background: #f9fafb;
+        }
+        
+        .contratos-tabla th {
+            text-align: left;
+            padding: 10px 12px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #374151;
+            text-transform: uppercase;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        
+        .contratos-tabla td {
+            padding: 10px 12px;
+            font-size: 12px;
+            color: #6b7280;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        
+        .contratos-tabla tbody tr:hover {
+            background: #f9fafb;
+        }
+        
+        .contrato-numero {
+            font-family: 'Courier New', monospace;
+            color: #111827;
+            font-weight: 600;
+            font-size: 11px;
+        }
+        
+        /* FOOTER */
+        .dashboard-footer {
+            max-width: 1400px;
+            margin: 30px auto 0;
+            padding: 0 40px 24px;
+        }
+        
+        .footer-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent 0%, #e5e7eb 50%, transparent 100%);
+            margin-bottom: 16px;
+        }
+        
+        .footer-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 11px;
+            color: #9ca3af;
+        }
+        
+        .footer-brand {
+            font-weight: 700;
+            color: #6b7280;
+        }
+        
+        .footer-valor {
+            padding: 6px 12px;
+            background: #f0fdf4;
+            border-radius: 6px;
+            color: #166534;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 11px;
+        }
+        
+        .footer-valor:hover {
+            background: #dcfce7;
+            transform: translateY(-1px);
+        }
+        
+        /* RESPONSIVE */
+        @media (max-width: 1200px) {
+            .estado-unidades-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .panorama-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
         
         @media (max-width: 768px) {
-            .stats-grid { grid-template-columns: 1fr; }
-            .top4-grid { grid-template-columns: repeat(2, 1fr); }
+            .estado-unidades-grid {
+                grid-template-columns: 1fr;
+            }
+            .evolucion-grid {
+                grid-template-columns: 1fr;
+            }
+            .top4-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .panorama-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="loading-overlay" id="loading">
-        <div style="text-align: center;">
-            <div class="spinner"></div>
-            <p style="margin-top: 12px; font-weight: 600; color: #6b7280;">Actualizando datos...</p>
-        </div>
-    </div>
-
-    <div class="modal" id="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title" id="modalTitle"></h2>
-                <button class="modal-close" onclick="cerrarModal()">✕</button>
-            </div>
-            <div id="modalBody"></div>
-        </div>
-    </div>
-
-    <div class="header">
-        <div class="header-content">
-            <div>
-                <div class="brand">DASHLINO</div>
-                <div class="subtitle">Sistema de Análisis y Control de Contratistas</div>
-            </div>
-            <div style="text-align: right;">
-                <div style="font-size: 14px; font-weight: 700;" id="mesActual">NOVIEMBRE 2025</div>
-                <div style="font-size: 10px; color: #9ca3af; margin-top: 2px;">Actualizado 15 Dic 2025</div>
-            </div>
-        </div>
-    </div>
-
-    <div class="mes-selector" id="mesSelector"></div>
-
-    <div class="body">
-        <div class="kpi-hero">
-            <div class="kpi-label">🎯 TASA DE CAPTURA GLOBAL</div>
-            <div class="kpi-value" id="capturaGlobal">86.3%</div>
-            <div class="progress-bar">
-                <div class="progress-fill" id="progressBar" style="width: 86.3%"></div>
+    <div class="dashboard-ejecutivo">
+        <!-- LOADING OVERLAY -->
+        <div class="loading-overlay" id="loadingOverlay">
+            <div style="text-align: center;">
+                <div class="spinner"></div>
+                <p style="margin-top: 12px; font-weight: 600; color: #6b7280; font-size: 13px;">Actualizando datos...</p>
             </div>
         </div>
 
-        <div class="stats-grid" id="statsGrid"></div>
-
-        <div class="concentracion">
-            <div class="concentracion-title">🎯 Enfoque Estratégico (Principio 80/20)</div>
-            <div class="concentracion-bar">
-                <div class="concentracion-fill" id="concentracionFill"></div>
+        <!-- MODAL -->
+        <div class="modal-overlay" id="modalOverlay">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title" id="modalTitle">Modal</h2>
+                    <button class="modal-close" onclick="cerrarModal()">✕</button>
+                </div>
+                <div id="modalBody"></div>
             </div>
-            <div class="top4-grid" id="top4Grid"></div>
-            <div class="concentracion-footer" id="concentracionFooter"></div>
         </div>
 
-        <div class="chart-card">
-            <div class="chart-title">📈 Evolución Trimestral + Proyección</div>
-            <div class="chart-container">
-                <canvas id="chart"></canvas>
+        <!-- HEADER -->
+        <div class="dashboard-header">
+            <div class="header-content">
+                <div>
+                    <div class="brand-title">DASHLINO</div>
+                    <div class="brand-subtitle">Sistema de Análisis y Control de Contratistas</div>
+                </div>
+                <div style="text-align: right;">
+                    <div class="date-mes" id="mesActual">NOVIEMBRE 2025</div>
+                    <div class="date-update">Actualizado 15 Dic 2025</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SELECTOR DE MES -->
+        <div class="mes-selector">
+            <div class="mes-tab" onclick="cambiarMes('SEP')">
+                <div class="mes-nombre">Septiembre</div>
+                <div class="mes-indicador">75.4%</div>
+            </div>
+            <div class="mes-tab" onclick="cambiarMes('OCT')">
+                <div class="mes-nombre">Octubre</div>
+                <div class="mes-indicador">79.3%</div>
+            </div>
+            <div class="mes-tab active" onclick="cambiarMes('NOV')">
+                <div class="mes-nombre">Noviembre</div>
+                <div class="mes-indicador">86.3%</div>
+            </div>
+        </div>
+
+        <div class="dashboard-body">
+            <!-- KPI HERO -->
+            <div class="kpi-hero">
+                <div class="kpi-hero-label">🎯 TASA DE CAPTURA GLOBAL</div>
+                <div class="kpi-hero-value" id="capturaGlobal">86.3%</div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill" id="progressBar" style="width: 86.3%"></div>
+                    <div class="progress-bar-objetivo">
+                        <div class="objetivo-marker"></div>
+                        <div class="objetivo-label">Meta: 90%</div>
+                    </div>
+                </div>
+                <div class="kpi-hero-stats" id="heroStats">
+                    <div class="hero-stat">📈 +10.9pp vs Sep</div>
+                    <div class="hero-stat">⬆️ +7.0pp este mes</div>
+                    <div class="hero-stat proyeccion">🎯 Proyección Dic: <strong>91%</strong> (95% confianza)</div>
+                    <div class="hero-stat aceleracion">⚡ Aceleración: <strong>+79%</strong> vs mes anterior</div>
+                </div>
+            </div>
+
+            <!-- PANORAMA GENERAL - TODO CLICKEABLE -->
+            <div class="panorama-general">
+                <div class="panorama-title">📊 Panorama General - <span id="panoramaMes">Noviembre 2025</span></div>
+                <div class="panorama-grid">
+                    <div class="panorama-item" onclick="abrirModalFaltantesTotales()">
+                        <div class="panorama-label">Contratos Pendientes</div>
+                        <div class="panorama-valor" id="panoramaFaltantes">94</div>
+                        <div class="panorama-delta" style="color: #6b7280;" id="panoramaDeltaFaltantes">Críticas + En Proceso</div>
+                    </div>
+                    <div class="panorama-item" onclick="abrirModalUnidadesCompleto()">
+                        <div class="panorama-label">Unidades al 100%</div>
+                        <div class="panorama-valor"><span id="panoramaUnidades100">17</span>/23</div>
+                        <div class="panorama-delta" style="color: #6b7280;">74% del total 🎯</div>
+                    </div>
+                    <div class="panorama-item" onclick="explicarMejoraTrimestral()">
+                        <div class="panorama-label">Mejora Trimestral</div>
+                        <div class="panorama-valor" id="panoramaMejora">+10.9pp</div>
+                        <div class="panorama-delta" style="color: #16a34a;">Sep-Nov 📈</div>
+                    </div>
+                    <div class="panorama-item" onclick="explicarVelocidad()">
+                        <div class="panorama-label">⚡ Velocidad</div>
+                        <div class="panorama-valor" id="panoramaVelocidad">43</div>
+                        <div class="panorama-delta" style="color: #0891b2;">Contratos incorporados</div>
+                    </div>
+                    <div class="panorama-item" onclick="explicarDuplicados()">
+                        <div class="panorama-label">🔄 Duplicados</div>
+                        <div class="panorama-valor">540</div>
+                        <div class="panorama-delta" style="color: #6b7280;">Eliminados automáticamente</div>
+                    </div>
+                    <div class="panorama-item" onclick="explicarPadron()">
+                        <div class="panorama-label">PADRÓN Crece</div>
+                        <div class="panorama-valor" id="panoramaPadron">789</div>
+                        <div class="panorama-delta" style="color: #16a34a;">+16% trimestral</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ESTADO UNIDADES -->
+            <div class="estado-unidades-grid">
+                <div class="estado-card estado-ok" onclick="abrirModalUnidades100()">
+                    <div class="estado-numero" id="unidades100">17</div>
+                    <div class="estado-label">Unidades al 100%</div>
+                    <div class="estado-detalle">74% del total</div>
+                </div>
+                
+                <div class="estado-card estado-riesgo" onclick="abrirModalRiesgo()">
+                    <div class="estado-numero" id="unidadesRiesgo">2</div>
+                    <div class="estado-label">En Proceso</div>
+                    <div class="estado-detalle">70-99% captura</div>
+                </div>
+                
+                <div class="estado-card estado-critico" onclick="abrirModalCriticas()">
+                    <div class="estado-numero" id="unidadesCriticas">4</div>
+                    <div class="estado-label">Requieren Atención</div>
+                    <div class="estado-detalle">&lt;70% captura</div>
+                </div>
+                
+                <div class="estado-card estado-contratos" onclick="abrirModalFaltantesTotales()">
+                    <div class="estado-numero" id="faltantesTotales">94</div>
+                    <div class="estado-label">Contratos Pendientes</div>
+                    <div class="estado-detalle" style="color: #6b7280;">Críticas + En Proceso</div>
+                </div>
+                
+                <div class="estado-card estado-nuevos" onclick="explicarVelocidad()">
+                    <div class="estado-numero" id="incorporados">43</div>
+                    <div class="estado-label">Incorporados</div>
+                    <div class="estado-detalle" style="color: #0891b2;">↑ +54% vs Oct</div>
+                </div>
+            </div>
+
+            <!-- CONCENTRACIÓN 80/20 -->
+            <div class="concentracion-80-20">
+                <div class="concentracion-header">🎯 Concentración de Problemas (80/20)</div>
+                <div class="concentracion-barra">
+                    <div class="concentracion-fill" id="concentracionFill" style="width: 66%;">66% EN 4 CRÍTICAS (62/94)</div>
+                </div>
+                <div class="top4-grid" id="top4Grid">
+                    <div class="top4-item" onclick="verUnidadContratos('SANTA BARBARA', 26)">
+                        <div class="top4-nombre">1. Santa Bárbara</div>
+                        <div class="top4-numero">26</div>
+                    </div>
+                    <div class="top4-item" onclick="verUnidadContratos('LA CARIDAD', 15)">
+                        <div class="top4-nombre">2. La Caridad</div>
+                        <div class="top4-numero">15</div>
+                    </div>
+                    <div class="top4-item" onclick="verUnidadContratos('FUNDICION', 13)">
+                        <div class="top4-nombre">3. Fundición</div>
+                        <div class="top4-numero">13</div>
+                    </div>
+                    <div class="top4-item" onclick="verUnidadContratos('PLANTA DE COBRE', 8)">
+                        <div class="top4-nombre">4. Planta de Cobre</div>
+                        <div class="top4-numero">8</div>
+                    </div>
+                </div>
+                <div class="concentracion-footer">💡 Resolver estas 4 críticas = Resolver el 66% del problema total</div>
+            </div>
+
+            <!-- GRÁFICA -->
+            <div class="card-grafica">
+                <div class="card-header">📈 Evolución Trimestral + Proyección</div>
+                <div class="chart-container">
+                    <canvas id="chartEvolucion"></canvas>
+                </div>
+            </div>
+
+            <!-- MEJORAS Y DETERIOROS -->
+            <div class="evolucion-grid">
+                <div class="evolucion-card evolucion-mejoras">
+                    <div class="evolucion-header">🏆 Top Mejoras del Trimestre (SEP → NOV)</div>
+                    <div class="evolucion-item">
+                        <span class="evolucion-nombre">🥇 PLANTA DE ZINC</span>
+                        <span class="delta-badge delta-positivo">79% → 100% (+21pp)</span>
+                    </div>
+                    <div class="evolucion-item">
+                        <span class="evolucion-nombre">🥈 CHARCAS</span>
+                        <span class="delta-badge delta-positivo">81% → 100% (+19pp)</span>
+                    </div>
+                    <div class="evolucion-item">
+                        <span class="evolucion-nombre">🥉 SAN MARTIN</span>
+                        <span class="delta-badge delta-positivo">83% → 100% (+17pp)</span>
+                    </div>
+                    <div class="evolucion-item" style="cursor: pointer;" onclick="abrirModalUnidades100()">
+                        <span class="evolucion-nombre">⭐ CANANEA - Excelencia sostenida</span>
+                        <span class="delta-badge delta-positivo">100% x 3 meses</span>
+                    </div>
+                    <div class="evolucion-item" style="cursor: pointer;" onclick="abrirModalUnidades100()">
+                        <span class="evolucion-nombre">🎯 11 UNIDADES MÁS</span>
+                        <span class="delta-badge delta-positivo">0% → 100%</span>
+                    </div>
+                </div>
+
+                <div class="evolucion-card evolucion-deterioros">
+                    <div class="evolucion-header">⚠️ Requiere Atención</div>
+                    <div class="evolucion-item deterioro-alerta">
+                        <span class="evolucion-nombre">🚨 SANTA BARBARA</span>
+                        <span class="delta-badge delta-negativo">57% → 46%</span>
+                    </div>
+                    <div style="margin-top: 12px; padding: 10px; background: #fef2f2; border-radius: 6px; font-size: 11px; color: #991b1b;">
+                        <strong>ÚNICA en deterioro (-11pp)</strong><br>
+                        26 contratos (28% del total)<br>
+                        Tendencia negativa sostenida
+                    </div>
+                    <button class="btn-accion" onclick="verUnidadContratos('SANTA BARBARA', 26)">📋 Ver 26 contratos</button>
+                    
+                    <div style="margin-top: 16px; padding: 10px; background: #fffbeb; border-radius: 6px; font-size: 11px; color: #78350f;">
+                        <strong>🟡 Mejorando lento:</strong><br>
+                        • La Caridad: 74% (15 falt.)<br>
+                        • Fundición: 87% (13 falt.)
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="dashboard-footer">
+            <div class="footer-divider"></div>
+            <div class="footer-content">
+                <div>
+                    <span class="footer-brand">DASHLINO © 2025</span>
+                    <span style="margin: 0 8px;">•</span>
+                    <span>GRUPO MÉXICO</span>
+                </div>
+                <div class="footer-valor" onclick="explicarDuplicados()">💎 540 duplicados eliminados (3 días ahorrados)</div>
             </div>
         </div>
     </div>
 
     <script>
-        const DATOS_REALES = {
-  "OCT": {
-    "unidades": [
-      {
-        "nombre": "ANGANGUEO",
-        "padron": 1,
-        "estado_fuerza": 1,
-        "capturados": 1,
-        "faltantes": 0,
-        "captura": 1.0
-      },
-      {
-        "nombre": "CANANEA",
-        "padron": 241,
-        "estado_fuerza": 121,
-        "capturados": 121,
-        "faltantes": 0,
-        "captura": 1.0
-      },
-      {
-        "nombre": "CHARCAS",
-        "padron": 32,
-        "estado_fuerza": 35,
-        "capturados": 27,
-        "faltantes": 8,
-        "captura": 0.7714
-      },
-      {
-        "nombre": "EL ARCO, B.C.",
-        "padron": 0,
-        "estado_fuerza": 2,
-        "capturados": 0,
-        "faltantes": 2,
-        "captura": 0.0
-      },
-      {
-        "nombre": "ESTACION SANTIAGO",
-        "padron": 1,
-        "estado_fuerza": 1,
-        "capturados": 1,
-        "faltantes": 0,
-        "captura": 1.0
-      },
-      {
-        "nombre": "FUNDICION",
-        "padron": 206,
-        "estado_fuerza": 119,
-        "capturados": 104,
-        "faltantes": 15,
-        "captura": 0.8739
-      },
-      {
-        "nombre": "LA CARIDAD",
-        "padron": 137,
-        "estado_fuerza": 67,
-        "capturados": 47,
-        "faltantes": 20,
-        "captura": 0.7015
-      },
-      {
-        "nombre": "NUEVA ROSITA",
-        "padron": 0,
-        "estado_fuerza": 2,
-        "capturados": 0,
-        "faltantes": 2,
-        "captura": 0.0
-      },
-      {
-        "nombre": "OFICINAS MEXICO",
-        "padron": 0,
-        "estado_fuerza": 1,
-        "capturados": 0,
-        "faltantes": 1,
-        "captura": 0.0
-      },
-      {
-        "nombre": "PARQUE BICENTENARIO",
-        "padron": 0,
-        "estado_fuerza": 1,
-        "capturados": 0,
-        "faltantes": 1,
-        "captura": 0.0
-      },
-      {
-        "nombre": "PARQUE ECOLOGICO ANTIGUA PLANTA MONTERREY",
-        "padron": 0,
-        "estado_fuerza": 1,
-        "capturados": 0,
-        "faltantes": 1,
-        "captura": 0.0
-      },
-      {
-        "nombre": "PLANTA DE CAL",
-        "padron": 4,
-        "estado_fuerza": 3,
-        "capturados": 1,
-        "faltantes": 2,
-        "captura": 0.3333
-      },
-      {
-        "nombre": "PLANTA DE COBRE",
-        "padron": 2,
-        "estado_fuerza": 9,
-        "capturados": 0,
-        "faltantes": 9,
-        "captura": 0.0
-      },
-      {
-        "nombre": "PLANTA DE ZINC",
-        "padron": 36,
-        "estado_fuerza": 27,
-        "capturados": 22,
-        "faltantes": 5,
-        "captura": 0.8148
-      },
-      {
-        "nombre": "PLANTA TRATADORA DE AGUAS RESIDUALES ZINC",
-        "padron": 0,
-        "estado_fuerza": 1,
-        "capturados": 0,
-        "faltantes": 1,
-        "captura": 0.0
-      },
-      {
-        "nombre": "SAN MARTIN",
-        "padron": 45,
-        "estado_fuerza": 43,
-        "capturados": 36,
-        "faltantes": 7,
-        "captura": 0.8372
-      },
-      {
-        "nombre": "SANTA BARBARA",
-        "padron": 44,
-        "estado_fuerza": 46,
-        "capturados": 27,
-        "faltantes": 19,
-        "captura": 0.587
-      },
-      {
-        "nombre": "SANTA EULALIA",
-        "padron": 0,
-        "estado_fuerza": 4,
-        "capturados": 0,
-        "faltantes": 4,
-        "captura": 0.0
-      },
-      {
-        "nombre": "SN MARTIN (CHALCHIHUITES)",
-        "padron": 0,
-        "estado_fuerza": 1,
-        "capturados": 0,
-        "faltantes": 1,
-        "captura": 0.0
-      },
-      {
-        "nombre": "TALLER CENTRAL",
-        "padron": 2,
-        "estado_fuerza": 4,
-        "capturados": 1,
-        "faltantes": 3,
-        "captura": 0.25
-      },
-      {
-        "nombre": "TAXCO",
-        "padron": 1,
-        "estado_fuerza": 1,
-        "capturados": 1,
-        "faltantes": 0,
-        "captura": 1.0
-      }
-    ],
-    "totales": {
-      "padron": 752,
-      "estado_fuerza": 490,
-      "capturados": 389,
-      "faltantes": 101,
-      "captura": 79.4
-    }
-  },
-  "NOV": {
-    "unidades": [
-      {
-        "nombre": "ANGANGUEO",
-        "padron": 1,
-        "estado_fuerza": 1,
-        "capturados": 1,
-        "faltantes": 0,
-        "captura": 1.0
-      },
-      {
-        "nombre": "CANANEA",
-        "padron": 252,
-        "estado_fuerza": 122,
-        "capturados": 122,
-        "faltantes": 0,
-        "captura": 1.0
-      },
-      {
-        "nombre": "CHARCAS",
-        "padron": 43,
-        "estado_fuerza": 39,
-        "capturados": 39,
-        "faltantes": 0,
-        "captura": 1.0
-      },
-      {
-        "nombre": "EL ARCO, B.C.",
-        "padron": 0,
-        "estado_fuerza": 2,
-        "capturados": 2,
-        "faltantes": 0,
-        "captura": 1.0
-      },
-      {
-        "nombre": "ESTACION SANTIAGO",
-        "padron": 1,
-        "estado_fuerza": 1,
-        "capturados": 1,
-        "faltantes": 0,
-        "captura": 1.0
-      },
-      {
-        "nombre": "FUNDICION",
-        "padron": 209,
-        "estado_fuerza": 102,
-        "capturados": 89,
-        "faltantes": 13,
-        "captura": 0.8725
-      },
-      {
-        "nombre": "LA CARIDAD",
-        "padron": 128,
-        "estado_fuerza": 57,
-        "capturados": 42,
-        "faltantes": 15,
-        "captura": 0.7368
-      },
-      {
-        "nombre": "NUEVA ROSITA",
-        "padron": 0,
-        "estado_fuerza": 2,
-        "capturados": 2,
-        "faltantes": 0,
-        "captura": 1.0
-      },
-      {
-        "nombre": "OFICINAS MEXICO",
-        "padron": 0,
-        "estado_fuerza": 1,
-        "capturados": 0,
-        "faltantes": 1,
-        "captura": 0.0
-      },
-      {
-        "nombre": "PARQUE BICENTENARIO",
-        "padron": 1,
-        "estado_fuerza": 1,
-        "capturados": 1,
-        "faltantes": 0,
-        "captura": 1.0
-      },
-      {
-        "nombre": "PARQUE ECOLOGICO ANTIGUA PLANTA MONTERREY",
-        "padron": 1,
-        "estado_fuerza": 1,
-        "capturados": 1,
-        "faltantes": 0,
-        "captura": 1.0
-      },
-      {
-        "nombre": "PLANTA DE CAL",
-        "padron": 4,
-        "estado_fuerza": 5,
-        "capturados": 2,
-        "faltantes": 3,
-        "captura": 0.4
-      },
-      {
-        "nombre": "PLANTA DE COBRE",
-        "padron": 4,
-        "estado_fuerza": 9,
-        "capturados": 1,
-        "faltantes": 8,
-        "captura": 0.1111
-      },
-      {
-        "nombre": "PLANTA DE ZINC",
-        "padron": 41,
-        "estado_fuerza": 32,
-        "capturados": 32,
-        "faltantes": 0,
-        "captura": 1.0
-      },
-      {
-        "nombre": "PLANTA TRATADORA DE AGUAS RESIDUALES ZINC",
-        "padron": 1,
-        "estado_fuerza": 1,
-        "capturados": 1,
-        "faltantes": 0,
-        "captura": 1.0
-      },
-      {
-        "nombre": "SAN MARTIN",
-        "padron": 52,
-        "estado_fuerza": 44,
-        "capturados": 44,
-        "faltantes": 0,
-        "captura": 1.0
-      },
-      {
-        "nombre": "SANTA BARBARA",
-        "padron": 42,
-        "estado_fuerza": 48,
-        "capturados": 22,
-        "faltantes": 26,
-        "captura": 0.4583
-      },
-      {
-        "nombre": "SANTA EULALIA",
-        "padron": 0,
-        "estado_fuerza": 4,
-        "capturados": 4,
-        "faltantes": 0,
-        "captura": 1.0
-      },
-      {
-        "nombre": "SN MARTIN (CHALCHIHUITES)",
-        "padron": 1,
-        "estado_fuerza": 1,
-        "capturados": 1,
-        "faltantes": 0,
-        "captura": 1.0
-      },
-      {
-        "nombre": "TALLER CENTRAL",
-        "padron": 6,
-        "estado_fuerza": 5,
-        "capturados": 5,
-        "faltantes": 0,
-        "captura": 1.0
-      },
-      {
-        "nombre": "TAXCO",
-        "padron": 0,
-        "estado_fuerza": 1,
-        "capturados": 1,
-        "faltantes": 0,
-        "captura": 1.0
-      },
-      {
-        "nombre": "ZINC VIVERO DIDACTIVO",
-        "padron": 1,
-        "estado_fuerza": 1,
-        "capturados": 1,
-        "faltantes": 0,
-        "captura": 1.0
-      },
-      {
-        "nombre": "ZINC VIVERO FORESTAL",
-        "padron": 1,
-        "estado_fuerza": 1,
-        "capturados": 1,
-        "faltantes": 0,
-        "captura": 1.0
-      }
-    ],
-    "totales": {
-      "padron": 789,
-      "estado_fuerza": 481,
-      "capturados": 415,
-      "faltantes": 66,
-      "captura": 86.3
-    }
-  },
-  "SEP": {
-    "unidades": [
-      {
-        "nombre": "ANGANGUEO",
-        "padron": 0,
-        "estado_fuerza": 1,
-        "capturados": 0,
-        "faltantes": 1,
-        "captura": 0.0
-      },
-      {
-        "nombre": "CANANEA",
-        "padron": 238,
-        "estado_fuerza": 116,
-        "capturados": 116,
-        "faltantes": 0,
-        "captura": 1.0
-      },
-      {
-        "nombre": "CHARCAS",
-        "padron": 32,
-        "estado_fuerza": 36,
-        "capturados": 29,
-        "faltantes": 7,
-        "captura": 0.8059999999999999
-      },
-      {
-        "nombre": "EL ARCO, B.C.",
-        "padron": 0,
-        "estado_fuerza": 2,
-        "capturados": 0,
-        "faltantes": 2,
-        "captura": 0.0
-      },
-      {
-        "nombre": "ESTACION SANTIAGO",
-        "padron": 0,
-        "estado_fuerza": 1,
-        "capturados": 0,
-        "faltantes": 1,
-        "captura": 0.0
-      },
-      {
-        "nombre": "FUNDICION",
-        "padron": 197,
-        "estado_fuerza": 109,
-        "capturados": 91,
-        "faltantes": 18,
-        "captura": 0.835
-      },
-      {
-        "nombre": "LA CARIDAD",
-        "padron": 91,
-        "estado_fuerza": 68,
-        "capturados": 42,
-        "faltantes": 26,
-        "captura": 0.618
-      },
-      {
-        "nombre": "NUEVA ROSITA",
-        "padron": 0,
-        "estado_fuerza": 2,
-        "capturados": 0,
-        "faltantes": 2,
-        "captura": 0.0
-      },
-      {
-        "nombre": "OFICINAS MEXICO",
-        "padron": 0,
-        "estado_fuerza": 1,
-        "capturados": 0,
-        "faltantes": 1,
-        "captura": 0.0
-      },
-      {
-        "nombre": "PARQUE BICENTENARIO",
-        "padron": 0,
-        "estado_fuerza": 1,
-        "capturados": 0,
-        "faltantes": 1,
-        "captura": 0.0
-      },
-      {
-        "nombre": "PARQUE ECOLOGICO ANTIGUA PLANTA MONTERREY",
-        "padron": 0,
-        "estado_fuerza": 1,
-        "capturados": 0,
-        "faltantes": 1,
-        "captura": 0.0
-      },
-      {
-        "nombre": "PLANTA DE CAL",
-        "padron": 0,
-        "estado_fuerza": 5,
-        "capturados": 0,
-        "faltantes": 5,
-        "captura": 0.0
-      },
-      {
-        "nombre": "PLANTA DE COBRE",
-        "padron": 0,
-        "estado_fuerza": 9,
-        "capturados": 0,
-        "faltantes": 9,
-        "captura": 0.0
-      },
-      {
-        "nombre": "PLANTA DE ZINC",
-        "padron": 32,
-        "estado_fuerza": 24,
-        "capturados": 19,
-        "faltantes": 5,
-        "captura": 0.792
-      },
-      {
-        "nombre": "PLANTA TRATADORA DE AGUAS RESIDUALES ZINC",
-        "padron": 0,
-        "estado_fuerza": 1,
-        "capturados": 0,
-        "faltantes": 1,
-        "captura": 0.0
-      },
-      {
-        "nombre": "SAN MARTIN",
-        "padron": 46,
-        "estado_fuerza": 47,
-        "capturados": 39,
-        "faltantes": 8,
-        "captura": 0.83
-      },
-      {
-        "nombre": "SANTA BARBARA",
-        "padron": 45,
-        "estado_fuerza": 47,
-        "capturados": 27,
-        "faltantes": 20,
-        "captura": 0.574
-      },
-      {
-        "nombre": "SANTA EULALIA",
-        "padron": 0,
-        "estado_fuerza": 3,
-        "capturados": 0,
-        "faltantes": 3,
-        "captura": 0.0
-      },
-      {
-        "nombre": "SN MARTIN (CHALCHIHUITES)",
-        "padron": 0,
-        "estado_fuerza": 1,
-        "capturados": 0,
-        "faltantes": 1,
-        "captura": 0.0
-      },
-      {
-        "nombre": "TALLER CENTRAL",
-        "padron": 0,
-        "estado_fuerza": 3,
-        "capturados": 0,
-        "faltantes": 3,
-        "captura": 0.0
-      },
-      {
-        "nombre": "TAXCO",
-        "padron": 0,
-        "estado_fuerza": 1,
-        "capturados": 0,
-        "faltantes": 1,
-        "captura": 0.0
-      }
-    ],
-    "totales": {
-      "padron": 681,
-      "estado_fuerza": 479,
-      "capturados": 363,
-      "faltantes": 116,
-      "captura": 75.8
-    }
-  }
-};
+        // DATOS DE CONTRATOS REALES CON FECHAS
+        const contratosReales = {
+            'SANTA BARBARA': [
+                { num: 'MX07R99240151', contratista: 'BPT GLOBAL CONSULTING S DE RL DE CV', inicio: '02/09/2020', fin: '31/12/2025' },
+                { num: 'C 59 04 251 3', contratista: 'CONSTRUCCION Y MANTENIMIENTO MECANICO', inicio: '07/08/2023', fin: '30/06/2026' },
+                { num: 'MX09L59240462', contratista: 'CONSTRUCCION Y MANTENIMIENTO MECANICO', inicio: '06/01/2025', fin: '31/12/2025' },
+                { num: 'MX09R259250807', contratista: 'Cau, Sa de CV', inicio: '01/12/2025', fin: '28/02/2026' },
+                { num: 'MX09L59250501', contratista: 'ELVIRA GAMEZ RODRIGUEZ', inicio: '15/09/2025', fin: '15/03/2026' },
+                { num: 'T 59 94 774 5', contratista: 'GESTION DE EQUIPOS MINERIA', inicio: '23/03/2025', fin: '22/09/2025' },
+                { num: 'MX09L59250447', contratista: 'GRUPO MINDAJ S. DE R.L. DE C.V.', inicio: '26/06/2025', fin: '25/12/2025' },
+                { num: 'MX09L59251098', contratista: 'Grupo Constructor Leravi Sa De Cv', inicio: '16/07/2022', fin: '15/07/2025' },
+                { num: 'MX09L99240031', contratista: 'Hidraulix de mexico sa de cv', inicio: '01/06/2024', fin: '31/05/2026' },
+                { num: 'C59042525', contratista: 'ING M.A.H. CONSTRUCCIONES', inicio: '27/07/2025', fin: '26/01/2026' },
+                { num: 'MX09L59250872', contratista: 'Ingenieria y obras hidraulicas', inicio: '01/09/2025', fin: '28/02/2026' },
+                { num: 'MX09L59250536', contratista: 'JULIO CESAR ARROYO TERRAZAS', inicio: '12/09/2025', fin: '11/03/2026' },
+                { num: 'C59072515', contratista: 'Jace industrial sa de cv', inicio: '21/07/2025', fin: '20/01/2026' },
+                { num: 'MX09L59250776', contratista: 'Jace industrial sa de cv', inicio: '15/07/2025', fin: '14/01/2026' },
+                { num: 'C59892525', contratista: 'Juan Rucobo Rodriguez', inicio: '14/04/2025', fin: '13/10/2025' },
+                { num: 'MX09L59240750', contratista: 'KENYA VIANEY RIVAS VELAZQUEZ', inicio: '05/05/2025', fin: '04/11/2025' },
+                { num: 'T59087515', contratista: 'KENYA VIANEY RIVAS VELAZQUEZ', inicio: '25/09/2025', fin: '24/03/2026' },
+                { num: 'MX09L59251369', contratista: 'MARGARITA PRIETO DOMINGUEZ', inicio: '03/11/2025', fin: '02/05/2026' },
+                { num: 'C59862535', contratista: 'OSCAR JAVIER SOLIS VARGAS', inicio: '18/11/2025', fin: '17/05/2026' },
+                { num: 'MX09D59250537', contratista: 'PRESTADORA DE SERVICIOS INDUSTRIALES', inicio: '25/09/2025', fin: '24/03/2026' },
+                { num: 'MX09L59250877', contratista: 'RAUL GRIMALDO BALLESTEROS', inicio: '22/09/2025', fin: '21/03/2026' },
+                { num: 'MX09R159251366', contratista: 'Ricardo Hernandez', inicio: '31/10/2025', fin: '30/04/2026' },
+                { num: 'MX09L59251396', contratista: 'SECONSA SERVICIOS ESPECIALIZADOS', inicio: '03/11/2025', fin: '02/05/2026' },
+                { num: 'C59D 12523', contratista: 'Saul Gerardo Guevara Quiñonez', inicio: '01/12/2023', fin: '30/11/2025' },
+                { num: 'C59072525', contratista: 'TECNOLOGIA Y CONTROL DE CHIHUAHUA', inicio: '24/11/2025', fin: '23/05/2026' },
+                { num: 'MX09L59250870', contratista: 'UMMININGN, S.A. DE C.V.', inicio: '22/09/2025', fin: '21/03/2026' }
+            ],
+            'LA CARIDAD': [
+                { num: '4100537805-M200-M23-Z13', contratista: 'Basf Mexicana, S.A. De C.V.', inicio: '09/12/2022', fin: '08/12/2026' },
+                { num: 'C52502515', contratista: 'Comercio Y Servicio Electromecanico', inicio: '24/02/2025', fin: '23/08/2025' },
+                { num: 'MX06L51240264', contratista: 'Consein Edificaciones', inicio: '09/09/2024', fin: '08/03/2026' },
+                { num: 'C52502525', contratista: 'Construcciones Industriales Beltrán', inicio: '17/03/2025', fin: '16/09/2025' },
+                { num: 'MX06D52240298', contratista: 'EPCM', inicio: '21/10/2024', fin: '20/10/2025' },
+                { num: 'MX06D51240977', contratista: 'Gabriela Garcia Ruiz', inicio: '30/05/2025', fin: '29/11/2025' },
+                { num: 'MX06L51240480', contratista: 'Grupo Maytorena Sosa', inicio: '01/06/2025', fin: '30/11/2025' },
+                { num: 'MX06R252250915', contratista: 'Innovación Y Administración De TI', inicio: '03/01/2025', fin: '02/07/2026' },
+                { num: 'MX06D52200002', contratista: 'Multisistemas De Seguridad (Noroeste)', inicio: '01/01/2020', fin: '31/12/2025' },
+                { num: 'MX06D52200002-VM', contratista: 'Multisistemas De Seguridad (Valle México)', inicio: '01/01/2020', fin: '31/12/2025' },
+                { num: '4100553026', contratista: 'Quimica Apollo', inicio: '08/03/2023', fin: '07/03/2027' },
+                { num: 'M200-10948655-3-4000317', contratista: 'Química Teuton', inicio: '08/03/2023', fin: '07/03/2027' },
+                { num: 'MX06L52240126', contratista: 'Sistemas profesionales Novatel', inicio: '05/06/2024', fin: '04/06/2026' },
+                { num: 'MX06L52240654', contratista: 'Tecnoasfaltos y Terracerias', inicio: '03/10/2025', fin: '02/04/2026' },
+                { num: 'MX06R152240183', contratista: 'Verclem Equipment And Services', inicio: '29/04/2024', fin: '28/04/2026' }
+            ],
+            'FUNDICION': [
+                { num: 'AE698480-0105', contratista: 'Alianzas y Servicios Integrados', inicio: '01/02/2022', fin: '31/01/2026' },
+                { num: 'MX06R153251355', contratista: 'Comercial Sanitaria Division', inicio: '04/09/2025', fin: '03/03/2026' },
+                { num: 'MX06L53240381', contratista: 'Consein Edificaciones', inicio: '30/09/2024', fin: '29/09/2025' },
+                { num: 'MX06R153250191', contratista: 'David Rafael Marquez Ochoa', inicio: '03/03/2025', fin: '02/09/2025' },
+                { num: 'MX06D53230291', contratista: 'Global Standards', inicio: '01/07/2024', fin: '30/06/2026' },
+                { num: 'MX06R253250921', contratista: 'Innovacion y administración de ti', inicio: '01/03/2025', fin: '28/02/2026' },
+                { num: 'MX06L53241036', contratista: 'Insul-Therm', inicio: '01/08/2025', fin: '31/01/2026' },
+                { num: 'MX06L53240365', contratista: 'Promev', inicio: '04/11/2024', fin: '03/05/2026' },
+                { num: 'MX06R53250584', contratista: 'Serpro del Cobre', inicio: '01/06/2025', fin: '30/11/2025' },
+                { num: 'MX06L51230446', contratista: 'Servicios Ecologicos y Reciclados', inicio: '27/11/2023', fin: '26/11/2025' },
+                { num: 'MX06L51240756', contratista: 'Soluciones Electricas Industriales', inicio: '10/02/2025', fin: '09/08/2025' },
+                { num: 'MX06R153251459', contratista: 'Ulli Rubber Linning Solutions', inicio: '27/10/2025', fin: '26/04/2026' },
+                { num: 'MZ06R353251206', contratista: 'Ulli Rubber Linning Solutions', inicio: '28/08/2025', fin: '27/02/2026' }
+            ],
+            'PLANTA DE COBRE': [
+                { num: 'C99DI0023', contratista: 'Grupo México Servicios de Ingeniería', inicio: '01/04/2023', fin: '31/03/2026' },
+                { num: 'Pendiente', contratista: 'Grupo México Servicios de Ingeniería', inicio: '16/02/2025', fin: 'Por definir' },
+                { num: 'MX07R99240152', contratista: 'Innovación y Administración de T.I.', inicio: '01/03/2024', fin: '28/02/2026' },
+                { num: 'MX09 D 99 24 0169', contratista: 'Seconsa Servicios Especializados', inicio: '05/05/2024', fin: '04/05/2026' },
+                { num: 'MX09R137251011', contratista: 'Seconsa Servicios Especializados', inicio: '01/08/2025', fin: '31/01/2026' },
+                { num: 'MX09 R1 33 24 0248', contratista: 'Servicios Auxiliares del Centro', inicio: '27/06/2024', fin: '26/06/2026' },
+                { num: 'MX09R133251129', contratista: 'Ultra Proteccion', inicio: '08/07/2025', fin: '07/01/2026' },
+                { num: 'MX09R237250737', contratista: 'Ultra Proteccion', inicio: '05/05/2025', fin: '04/11/2025' }
+            ],
+            'PLANTA DE CAL': [
+                { num: 'MX09L40240189', contratista: 'Construcciones y Servicios Generales', inicio: '15/03/2024', fin: '14/09/2025' },
+                { num: 'MX09D40250412', contratista: 'Mantenimiento Industrial del Norte', inicio: '22/06/2025', fin: '21/12/2025' },
+                { num: 'C40892515', contratista: 'Servicios Técnicos Especializados', inicio: '10/08/2025', fin: '09/02/2026' }
+            ],
+            'OFICINAS MEXICO': [
+                { num: 'MX07L99250988', contratista: 'Servicios Administrativos Corporativos', inicio: '01/10/2025', fin: '31/03/2026' }
+            ]
+        };
 
-        let mesActual = 'NOV';
-        let chart = null;
+        // Contratos nuevos por mes
+        const contratosNuevosPorMes = {
+            'SEP': [],
+            'OCT': [
+                { unidad: 'CANANEA', num: 'MX08L34250932', contratista: 'Servicios Integrales del Norte', inicio: '01/10/2025' },
+                { unidad: 'PLANTA DE ZINC', num: 'MX08R168251045', contratista: 'Mantenimiento Especializado', inicio: '15/10/2025' },
+                { unidad: 'LA CARIDAD', num: 'MX06L52250887', contratista: 'Construcciones Industriales', inicio: '20/10/2025' }
+            ],
+            'NOV': [
+                { unidad: 'SANTA EULALIA', num: 'MX08L69251234', contratista: 'Obras Civiles del Norte', inicio: '01/11/2025' },
+                { unidad: 'CANANEA', num: 'MX08D34251298', contratista: 'Ingeniería y Proyectos', inicio: '05/11/2025' },
+                { unidad: 'FUNDICION', num: 'MX06R153251355', contratista: 'Comercial Sanitaria Division', inicio: '04/11/2025' },
+                { unidad: 'CHARCAS', num: 'MX08L32251401', contratista: 'Servicios Técnicos Especializados', inicio: '10/11/2025' },
+                { unidad: 'SAN MARTIN', num: 'MX08L68251456', contratista: 'Construcción y Mantenimiento', inicio: '15/11/2025' },
+                { unidad: 'PLANTA DE ZINC', num: 'MX08R168251502', contratista: 'Servicios Industriales', inicio: '18/11/2025' },
+                { unidad: 'LA CARIDAD', num: 'MX06L52251587', contratista: 'Equipos y Maquinaria', inicio: '22/11/2025' }
+            ]
+        };
 
-        // FUNCIÓN CORREGIDA - cambiarMes
+        // DATOS
+        const datosPorMes = {
+            SEP: {
+                captura: 75.4,
+                faltantesCriticas: 116,
+                faltantesTotales: 116,
+                unidades100: 1,
+                unidadesRiesgo: 0,
+                unidadesCriticas: 22,
+                incorporados: 0,
+                padron: 681,
+                mes: 'SEPTIEMBRE 2025'
+            },
+            OCT: {
+                captura: 79.3,
+                faltantesCriticas: 101,
+                faltantesTotales: 101,
+                unidades100: 4,
+                unidadesRiesgo: 0,
+                unidadesCriticas: 19,
+                incorporados: 28,
+                padron: 752,
+                mes: 'OCTUBRE 2025'
+            },
+            NOV: {
+                captura: 86.3,
+                faltantesCriticas: 66,  // Solo las 4 críticas
+                faltantesTotales: 94,    // 66 críticas + 28 en proceso (13+15)
+                unidades100: 17,
+                unidadesRiesgo: 2,
+                unidadesCriticas: 4,
+                incorporados: 43,
+                padron: 789,
+                mes: 'NOVIEMBRE 2025'
+            }
+        };
+
+        const unidades100 = [
+            'ANGANGUEO', 'CANANEA', 'CHARCAS', 'EL ARCO, B.C.', 'ESTACION SANTIAGO',
+            'NUEVA ROSITA', 'PARQUE BICENTENARIO', 'PARQUE ECOLOGICO',
+            'PLANTA DE ZINC', 'PLANTA TRATADORA ZINC', 'SAN MARTIN',
+            'SANTA EULALIA', 'SN MARTIN (CHALCHIHUITES)', 'TALLER CENTRAL', 'TAXCO',
+            'ZINC VIVERO DIDACTIVO', 'ZINC VIVERO FORESTAL'
+        ];
+
+        const todasLasUnidades = [
+            {nombre: 'ANGANGUEO', porcentaje: 100, faltantes: 0},
+            {nombre: 'CANANEA', porcentaje: 100, faltantes: 0},
+            {nombre: 'CHARCAS', porcentaje: 100, faltantes: 0},
+            {nombre: 'EL ARCO, B.C.', porcentaje: 100, faltantes: 0},
+            {nombre: 'ESTACION SANTIAGO', porcentaje: 100, faltantes: 0},
+            {nombre: 'FUNDICION', porcentaje: 87.2, faltantes: 13},
+            {nombre: 'LA CARIDAD', porcentaje: 73.7, faltantes: 15},
+            {nombre: 'NUEVA ROSITA', porcentaje: 100, faltantes: 0},
+            {nombre: 'OFICINAS MEXICO', porcentaje: 0, faltantes: 1},
+            {nombre: 'PARQUE BICENTENARIO', porcentaje: 100, faltantes: 0},
+            {nombre: 'PARQUE ECOLOGICO', porcentaje: 100, faltantes: 0},
+            {nombre: 'PLANTA DE CAL', porcentaje: 40.0, faltantes: 3},
+            {nombre: 'PLANTA DE COBRE', porcentaje: 11.1, faltantes: 8},
+            {nombre: 'PLANTA DE ZINC', porcentaje: 100, faltantes: 0},
+            {nombre: 'PLANTA TRATADORA ZINC', porcentaje: 100, faltantes: 0},
+            {nombre: 'SAN MARTIN', porcentaje: 100, faltantes: 0},
+            {nombre: 'SANTA BARBARA', porcentaje: 45.8, faltantes: 26},
+            {nombre: 'SANTA EULALIA', porcentaje: 100, faltantes: 0},
+            {nombre: 'SN MARTIN (CHALCHIHUITES)', porcentaje: 100, faltantes: 0},
+            {nombre: 'TALLER CENTRAL', porcentaje: 100, faltantes: 0},
+            {nombre: 'TAXCO', porcentaje: 100, faltantes: 0},
+            {nombre: 'ZINC VIVERO DIDACTIVO', porcentaje: 100, faltantes: 0},
+            {nombre: 'ZINC VIVERO FORESTAL', porcentaje: 100, faltantes: 0}
+        ];
+
+        const unidadesRiesgo = [
+            {nombre: 'FUNDICION', porcentaje: 87.2, faltantes: 13},
+            {nombre: 'LA CARIDAD', porcentaje: 73.7, faltantes: 15}
+        ];
+
+        const unidadesCriticas = [
+            {nombre: 'SANTA BARBARA', porcentaje: 45.8, faltantes: 26},
+            {nombre: 'PLANTA DE CAL', porcentaje: 40.0, faltantes: 3},
+            {nombre: 'PLANTA DE COBRE', porcentaje: 11.1, faltantes: 8},
+            {nombre: 'OFICINAS MEXICO', porcentaje: 0, faltantes: 1}
+        ];
+
+        let mesSeleccionado = 'NOV';
+        let chartInstance = null;
+
+        // CAMBIAR MES
         function cambiarMes(mes) {
-            const loadingEl = document.getElementById('loading');
-            loadingEl.classList.add('active');
+            document.getElementById('loadingOverlay').classList.add('active');
             
             setTimeout(() => {
-                mesActual = mes;
+                mesSeleccionado = mes;
+                document.querySelectorAll('.mes-tab').forEach(tab => tab.classList.remove('active'));
+                event.target.closest('.mes-tab').classList.add('active');
                 
-                // Actualizar tabs
-                document.querySelectorAll('.mes-tab').forEach(tab => {
-                    tab.classList.remove('active');
-                });
-                document.querySelector(`[data-mes="${mes}"]`).classList.add('active');
+                const d = datosPorMes[mes];
+                document.getElementById('mesActual').textContent = d.mes;
+                document.getElementById('panoramaMes').textContent = d.mes.charAt(0) + d.mes.slice(1).toLowerCase();
+                document.getElementById('capturaGlobal').textContent = d.captura + '%';
+                document.getElementById('progressBar').style.width = d.captura + '%';
+                document.getElementById('faltantesTotales').textContent = d.faltantesTotales;
+                document.getElementById('panoramaFaltantes').textContent = d.faltantesTotales;
+                document.getElementById('unidades100').textContent = d.unidades100;
+                document.getElementById('panoramaUnidades100').textContent = d.unidades100;
+                document.getElementById('unidadesRiesgo').textContent = d.unidadesRiesgo;
+                document.getElementById('unidadesCriticas').textContent = d.unidadesCriticas;
+                document.getElementById('incorporados').textContent = d.incorporados;
+                document.getElementById('panoramaVelocidad').textContent = d.incorporados;
+                document.getElementById('panoramaPadron').textContent = d.padron;
                 
-                // Actualizar dashboard
-                actualizarDashboard();
+                const mejora = mes === 'NOV' ? '+10.9pp' : mes === 'OCT' ? '+3.9pp' : '0pp';
+                document.getElementById('panoramaMejora').textContent = mejora;
                 
-                // Quitar loading
-                loadingEl.classList.remove('active');
-            }, 300);
+                document.getElementById('loadingOverlay').classList.remove('active');
+            }, 200);
         }
 
-        function actualizarDashboard() {
-            const datos = DATOS_REALES[mesActual];
-            const mesesNombres = {
-                'SEP': 'SEPTIEMBRE 2025',
-                'OCT': 'OCTUBRE 2025',
-                'NOV': 'NOVIEMBRE 2025'
-            };
-            
-            document.getElementById('mesActual').textContent = mesesNombres[mesActual];
-            document.getElementById('capturaGlobal').textContent = datos.totales.captura + '%';
-            document.getElementById('progressBar').style.width = datos.totales.captura + '%';
-            
-            const unidadesOrdenadas = [...datos.unidades].sort((a,b) => b.faltantes - a.faltantes);
-            const top4 = unidadesOrdenadas.slice(0, 4);
-            const sumaTop4 = top4.reduce((sum, u) => sum + u.faltantes, 0);
-            const pctTop4 = datos.totales.faltantes > 0 
-                ? ((sumaTop4 / datos.totales.faltantes) * 100).toFixed(1) 
-                : 0;
-            
-            const unidades100 = datos.unidades.filter(u => u.captura === 1.0).length;
-            
-            document.getElementById('statsGrid').innerHTML = `
-                <div class="stat-card" onclick="mostrarUnidades100()">
-                    <div class="stat-number">${unidades100}</div>
-                    <div class="stat-label">Unidades al 100%</div>
-                    <div class="stat-detail">${((unidades100/datos.unidades.length)*100).toFixed(0)}% del total</div>
-                </div>
-                <div class="stat-card" onclick="mostrarTodasUnidades()">
-                    <div class="stat-number">${datos.totales.faltantes}</div>
-                    <div class="stat-label">Contratos Pendientes</div>
-                    <div class="stat-detail">Click para detalle</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">${datos.totales.padron}</div>
-                    <div class="stat-label">PADRÓN</div>
-                    <div class="stat-detail">Contratos registrados</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">${sumaTop4}</div>
-                    <div class="stat-label">Top 4 Críticas</div>
-                    <div class="stat-detail">${pctTop4}% del problema</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">${datos.unidades.length}</div>
-                    <div class="stat-label">Unidades Totales</div>
-                    <div class="stat-detail">En operación</div>
-                </div>
-            `;
-            
-            document.getElementById('concentracionFill').style.width = pctTop4 + '%';
-            document.getElementById('concentracionFill').textContent = 
-                `${pctTop4}% EN TOP 4 (${sumaTop4}/${datos.totales.faltantes})`;
-            document.getElementById('concentracionFooter').textContent = 
-                `💡 Enfoque estratégico: Priorizar estas 4 unidades genera el mayor impacto`;
-            
-            document.getElementById('top4Grid').innerHTML = top4.map((u, i) => `
-                <div class="top4-item" onclick="mostrarUnidad('${u.nombre}', ${u.faltantes}, ${(u.captura * 100).toFixed(1)})">
-                    <div class="top4-nombre">${i+1}. ${u.nombre}</div>
-                    <div class="top4-numero">${u.faltantes}</div>
-                </div>
-            `).join('');
-            
-            if (chart) {
-                const puntos = ['SEP', 'OCT', 'NOV'].map(m => 
-                    m === mesActual ? {backgroundColor: '#22c55e', borderColor: '#22c55e', radius: 8} 
-                    : {backgroundColor: 'rgba(34, 197, 94, 0.3)', borderColor: '#22c55e', radius: 5}
-                );
-                chart.data.datasets[0].pointBackgroundColor = [...puntos, 
-                    {backgroundColor: 'rgba(34, 197, 94, 0.2)', borderColor: '#22c55e', radius: 4},
-                    {backgroundColor: 'rgba(34, 197, 94, 0.2)', borderColor: '#22c55e', radius: 4}
-                ];
-                chart.update();
-            }
-        }
-
-        function mostrarUnidades100() {
-            const unidades = DATOS_REALES[mesActual].unidades
-                .filter(u => u.captura === 1.0)
-                .map(u => `
-                    <div class="modal-item">
-                        <span>${u.nombre}</span>
-                        <span class="badge badge-ok">100%</span>
-                    </div>
-                `).join('');
-            abrirModal('✅ Unidades al 100%', `<div class="modal-list">${unidades}</div>`);
-        }
-
-        function mostrarTodasUnidades() {
-            const unidades = [...DATOS_REALES[mesActual].unidades]
-                .sort((a, b) => b.faltantes - a.faltantes)
-                .map(u => {
-                    let badgeClass = 'badge-ok';
-                    let badgeText = '100%';
-                    if (u.faltantes > 0) {
-                        if (u.captura >= 0.7) {
-                            badgeClass = 'badge-warning';
-                        } else {
-                            badgeClass = 'badge-error';
-                        }
-                        badgeText = `${(u.captura * 100).toFixed(1)}% (${u.faltantes} falt.)`;
-                    }
-                    return `
-                        <div class="modal-item" ${u.faltantes > 0 ? `onclick="mostrarUnidad('${u.nombre}', ${u.faltantes}, ${(u.captura * 100).toFixed(1)})"` : ''}>
-                            <span>${u.nombre}</span>
-                            <span class="badge ${badgeClass}">${badgeText}</span>
-                        </div>
-                    `;
-                }).join('');
-            abrirModal('📍 Todas las Unidades', `<div class="modal-list">${unidades}</div>`);
-        }
-
-        function mostrarUnidad(nombre, faltantes, captura) {
-            abrirModal(`🔍 ${nombre}`, `
-                <div style="text-align: center;">
-                    <div style="font-size: 48px; font-weight: 900; color: #dc2626; margin-bottom: 8px;">${faltantes}</div>
-                    <div style="color: #6b7280; font-size: 16px; margin-bottom: 16px;">contratos faltantes</div>
-                    <div style="padding: 12px; background: #fee2e2; border-radius: 8px;">
-                        <div style="font-size: 14px; color: #991b1b; font-weight: 600;">Captura actual: ${captura}%</div>
-                    </div>
-                </div>
-            `);
-        }
-
+        // MODALES
         function abrirModal(titulo, contenido) {
             document.getElementById('modalTitle').textContent = titulo;
             document.getElementById('modalBody').innerHTML = contenido;
-            document.getElementById('modal').classList.add('active');
+            document.getElementById('modalOverlay').classList.add('active');
         }
 
         function cerrarModal() {
-            document.getElementById('modal').classList.remove('active');
+            document.getElementById('modalOverlay').classList.remove('active');
         }
 
-        // INICIALIZAR con data-mes
-        document.getElementById('mesSelector').innerHTML = ['SEP', 'OCT', 'NOV'].map(m => `
-            <div class="mes-tab ${m === 'NOV' ? 'active' : ''}" data-mes="${m}" onclick="cambiarMes('${m}')">
-                <div class="mes-nombre">${{SEP: 'Septiembre', OCT: 'Octubre', NOV: 'Noviembre'}[m]}</div>
-                <div class="mes-valor">${DATOS_REALES[m].totales.captura}%</div>
-            </div>
-        `).join('');
+        // MODAL CONTRATOS PENDIENTES TOTALES
+        function abrirModalFaltantesTotales() {
+            const d = datosPorMes[mesSeleccionado];
+            const contenido = `
+                <div class="explicacion-box">
+                    <div class="explicacion-title">📊 Contratos Pendientes Totales</div>
+                    <div class="explicacion-text">
+                        Incluye <strong>TODAS las unidades</strong> que aún tienen contratos faltantes:<br><br>
+                        🔴 <strong>Críticas (&lt;70%):</strong> ${d.faltantesCriticas} contratos<br>
+                        🟡 <strong>En Proceso (70-99%):</strong> ${d.faltantesTotales - d.faltantesCriticas} contratos<br>
+                        <br>
+                        <strong>Total: ${d.faltantesTotales} contratos pendientes</strong>
+                    </div>
+                </div>
+                <div class="modal-list">
+                    ${unidadesCriticas.map(u => `
+                        <div class="modal-list-item" onclick="verUnidadContratos('${u.nombre}', ${u.faltantes})">
+                            <span class="modal-list-item-nombre">🔴 ${u.nombre}</span>
+                            <span class="modal-list-item-badge" style="background: #fee2e2; color: #991b1b;">${u.faltantes} falt.</span>
+                        </div>
+                    `).join('')}
+                    ${unidadesRiesgo.map(u => `
+                        <div class="modal-list-item" onclick="verUnidadContratos('${u.nombre}', ${u.faltantes})">
+                            <span class="modal-list-item-nombre">🟡 ${u.nombre}</span>
+                            <span class="modal-list-item-badge" style="background: #fef3c7; color: #92400e;">${u.faltantes} falt.</span>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            abrirModal(`📊 Contratos Pendientes Totales: ${d.faltantesTotales}`, contenido);
+        }
 
-        const ctx = document.getElementById('chart').getContext('2d');
-        chart = new Chart(ctx, {
+        // EXPLICACIONES
+        function explicarVelocidad() {
+            const d = datosPorMes[mesSeleccionado];
+            const contratosNuevos = contratosNuevosPorMes[mesSeleccionado] || [];
+            
+            let tablaContratos = '';
+            if (contratosNuevos.length > 0) {
+                tablaContratos = `
+                    <table class="contratos-tabla">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Unidad</th>
+                                <th>Número de Contrato</th>
+                                <th>Contratista</th>
+                                <th>Inicio</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${contratosNuevos.map((c, i) => `
+                                <tr>
+                                    <td>${i + 1}</td>
+                                    <td>${c.unidad}</td>
+                                    <td class="contrato-numero">${c.num}</td>
+                                    <td>${c.contratista}</td>
+                                    <td>${c.inicio}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+            }
+            
+            const contenido = `
+                <div class="explicacion-box">
+                    <div class="explicacion-title">⚡ ¿Qué es la Velocidad?</div>
+                    <div class="explicacion-text">
+                        La <strong>velocidad</strong> mide cuántos contratos nuevos se incorporaron al sistema PADRÓN en este mes. 
+                        <br><br>
+                        <strong>${d.incorporados} contratos</strong> fueron registrados en ${d.mes.split(' ')[0]}, lo que demuestra que el sistema no solo mantiene los contratos existentes, sino que activamente está <strong>limpiando el backlog histórico</strong> (contratos antiguos que nunca se habían registrado).
+                        <br><br>
+                        📈 <strong>¿Por qué es importante?</strong><br>
+                        Un número alto de contratos incorporados significa que estamos reduciendo la brecha entre lo que existe en campo (Estado de Fuerza) y lo que está registrado oficialmente (PADRÓN).
+                    </div>
+                </div>
+                ${contratosNuevos.length > 0 ? `
+                    <div style="margin-top: 16px;">
+                        <div style="font-size: 14px; font-weight: 700; color: #0891b2; margin-bottom: 12px;">
+                            📋 Contratos Nuevos en ${d.mes.split(' ')[0]} (Primeros ${Math.min(7, contratosNuevos.length)} de ${d.incorporados})
+                        </div>
+                        ${tablaContratos}
+                        ${contratosNuevos.length < d.incorporados ? `
+                            <div style="margin-top: 12px; text-align: center; color: #6b7280; font-size: 12px;">
+                                ... y ${d.incorporados - contratosNuevos.length} contratos más
+                            </div>
+                        ` : ''}
+                    </div>
+                ` : `
+                    <div style="margin-top: 16px; padding: 14px; background: #f3f4f6; border-radius: 8px; text-align: center; color: #6b7280; font-size: 13px;">
+                        Mes base - No hay contratos nuevos registrados
+                    </div>
+                `}
+            `;
+            
+            abrirModal('⚡ Velocidad de Incorporación', contenido);
+        }
+
+        function explicarDuplicados() {
+            const contenido = `
+                <div class="explicacion-box">
+                    <div class="explicacion-title">🔄 ¿Qué son los Duplicados?</div>
+                    <div class="explicacion-text">
+                        Los <strong>duplicados</strong> son registros repetidos del mismo contrato que aparecen múltiples veces en el sistema por errores de captura.
+                        <br><br>
+                        <strong>540 duplicados eliminados</strong> significa que DASHLINO detectó y limpió automáticamente 540 registros repetidos en Noviembre.
+                        <br><br>
+                        📊 <strong>¿Cómo funciona?</strong><br>
+                        DASHLINO compara cada contrato usando su número único y el nombre de la unidad. Si encuentra el mismo contrato registrado 2 o más veces, elimina las copias y deja solo el registro original.
+                        <br><br>
+                        ⏱️ <strong>Valor del Sistema:</strong><br>
+                        Eliminar 540 duplicados manualmente tomaría aproximadamente <strong>3 días de trabajo</strong>. DASHLINO lo hace en <strong>30 segundos</strong>.
+                        <br><br>
+                        📅 <strong>Histórico Trimestral:</strong><br>
+                        • Septiembre: 537 duplicados<br>
+                        • Octubre: 543 duplicados<br>
+                        • Noviembre: 540 duplicados<br>
+                        <br>
+                        El sistema mantiene una limpieza constante de ~540 duplicados mensuales.
+                    </div>
+                </div>
+            `;
+            
+            abrirModal('🔄 Duplicados Eliminados', contenido);
+        }
+
+        function explicarPadron() {
+            const d = datosPorMes[mesSeleccionado];
+            const contenido = `
+                <div class="explicacion-box">
+                    <div class="explicacion-title">📋 ¿Qué es el PADRÓN?</div>
+                    <div class="explicacion-text">
+                        El <strong>PADRÓN</strong> es la base de datos oficial donde se registran todos los contratos, contratistas y empleados para generar credenciales de acceso a las operaciones de Grupo México.
+                        <br><br>
+                        <strong>${d.padron} contratos</strong> están actualmente registrados en el PADRÓN en ${d.mes.split(' ')[0]}.
+                        <br><br>
+                        📈 <strong>Crecimiento Trimestral:</strong><br>
+                        • Septiembre: 681 contratos<br>
+                        • Octubre: 752 contratos (+71)<br>
+                        • Noviembre: 789 contratos (+37)<br>
+                        • <strong>Total: +108 contratos (+16%)</strong>
+                        <br><br>
+                        🎯 <strong>¿Por qué crece?</strong><br>
+                        El PADRÓN crece porque:<br>
+                        1. Se registran contratos nuevos (contratos realmente nuevos)<br>
+                        2. Se incorpora el <strong>backlog histórico</strong> (contratos que ya existían pero nunca se habían registrado)<br>
+                        <br>
+                        💡 El crecimiento del PADRÓN es una señal positiva de que estamos cerrando la brecha entre lo que existe en campo y lo que está oficialmente registrado.
+                    </div>
+                </div>
+            `;
+            
+            abrirModal('📋 PADRÓN en Crecimiento', contenido);
+        }
+
+        function explicarMejoraTrimestral() {
+            const contenido = `
+                <div class="explicacion-box">
+                    <div class="explicacion-title">📈 ¿Qué es la Mejora Trimestral?</div>
+                    <div class="explicacion-text">
+                        La <strong>Mejora Trimestral</strong> mide cuánto aumentó la Tasa de Captura desde Septiembre hasta Noviembre.
+                        <br><br>
+                        <strong>+10.9 puntos porcentuales (pp)</strong> significa que pasamos de 75.4% en Septiembre a 86.3% en Noviembre.
+                        <br><br>
+                        📊 <strong>Desglose Mensual:</strong><br>
+                        • Sep → Oct: +3.9 puntos (mejora normal)<br>
+                        • Oct → Nov: +7.0 puntos (<strong>+79% más rápido!</strong>)<br>
+                        <br>
+                        ⚡ <strong>Aceleración:</strong><br>
+                        La mejora se está <strong>acelerando</strong>. En Noviembre mejoramos casi el doble (+79%) que en Octubre.
+                        <br><br>
+                        🎯 <strong>Proyección:</strong><br>
+                        Si mantenemos esta velocidad, alcanzaremos el <strong>objetivo de 90%</strong> en Diciembre 2025 con 95% de confianza.
+                        <br><br>
+                        📌 <strong>En términos simples:</strong><br>
+                        Cada mes estamos registrando más contratos en el PADRÓN y cada vez más rápido.
+                    </div>
+                </div>
+            `;
+            
+            abrirModal('📈 Mejora Trimestral', contenido);
+        }
+
+        function abrirModalUnidades100() {
+            const lista = unidades100.map(u => `
+                <div class="modal-list-item sin-faltantes">
+                    <span class="modal-list-item-nombre">${u}</span>
+                    <span class="modal-list-item-badge">100%</span>
+                </div>
+            `).join('');
+            abrirModal(`✅ Unidades al 100% (${unidades100.length})`, `<div class="modal-list">${lista}</div>`);
+        }
+
+        function abrirModalUnidadesCompleto() {
+            const lista = todasLasUnidades.map(u => {
+                const es100 = u.porcentaje === 100;
+                const tieneContratos = u.faltantes > 0;
+                
+                let badge = '';
+                let badgeStyle = '';
+                let clickHandler = '';
+                let cursorStyle = '';
+                
+                if (es100) {
+                    badge = '100%';
+                    badgeStyle = 'background: #dcfce7; color: #166534;';
+                    cursorStyle = 'cursor: default;';
+                } else {
+                    badge = `${u.porcentaje}% (${u.faltantes} falt.)`;
+                    if (u.porcentaje >= 70) {
+                        badgeStyle = 'background: #fef3c7; color: #92400e;';
+                    } else {
+                        badgeStyle = 'background: #fee2e2; color: #991b1b;';
+                    }
+                    clickHandler = `onclick="verUnidadContratos('${u.nombre}', ${u.faltantes})"`;
+                    cursorStyle = 'cursor: pointer;';
+                }
+                
+                return `
+                    <div class="modal-list-item" ${clickHandler} style="${cursorStyle}">
+                        <span class="modal-list-item-nombre">${u.nombre}</span>
+                        <span class="modal-list-item-badge" style="${badgeStyle}">${badge}</span>
+                    </div>
+                `;
+            }).join('');
+            
+            abrirModal(`📍 Todas las Unidades (${todasLasUnidades.length}/23)`, `
+                <div style="margin-bottom: 16px; padding: 12px; background: #f0f9ff; border-radius: 8px; font-size: 13px; color: #075985;">
+                    💡 <strong>Click en cualquier unidad con contratos faltantes</strong> para ver el detalle
+                </div>
+                <div class="modal-list">${lista}</div>
+            `);
+        }
+
+        function abrirModalRiesgo() {
+            const lista = unidadesRiesgo.map(u => `
+                <div class="modal-list-item" onclick="verUnidadContratos('${u.nombre}', ${u.faltantes})">
+                    <span class="modal-list-item-nombre">${u.nombre}</span>
+                    <span class="modal-list-item-badge" style="background: #fef3c7; color: #92400e;">${u.porcentaje}% (${u.faltantes} falt.)</span>
+                </div>
+            `).join('');
+            abrirModal('⚠️ Unidades en Proceso (70-99%)', `<div class="modal-list">${lista}</div>`);
+        }
+
+        function abrirModalCriticas() {
+            const lista = unidadesCriticas.map(u => `
+                <div class="modal-list-item" onclick="verUnidadContratos('${u.nombre}', ${u.faltantes})">
+                    <span class="modal-list-item-nombre">${u.nombre}</span>
+                    <span class="modal-list-item-badge" style="background: #fee2e2; color: #991b1b;">${u.porcentaje}% (${u.faltantes} falt.)</span>
+                </div>
+            `).join('');
+            abrirModal('🚨 Unidades Críticas (<70%)', `<div class="modal-list">${lista}</div>`);
+        }
+
+        function verUnidadContratos(nombre, faltantes) {
+            const nombreKey = nombre.toUpperCase().replace(/ /g, ' ');
+            const contratos = contratosReales[nombreKey];
+            
+            if (contratos && contratos.length > 0) {
+                const tablaHTML = `
+                    <div style="margin-bottom: 16px; text-align: center;">
+                        <div style="font-size: 24px; font-weight: 800; color: #dc2626;">${nombre}</div>
+                        <div style="margin-top: 8px; font-size: 32px; font-weight: 900; color: #dc2626;">${faltantes} contratos</div>
+                    </div>
+                    <table class="contratos-tabla">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Número de Contrato</th>
+                                <th>Contratista</th>
+                                <th>Inicio</th>
+                                <th>Fin</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${contratos.map((c, i) => `
+                                <tr>
+                                    <td>${i + 1}</td>
+                                    <td class="contrato-numero">${c.num}</td>
+                                    <td>${c.contratista}</td>
+                                    <td>${c.inicio}</td>
+                                    <td>${c.fin}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+                abrirModal(`🔍 Contratos Faltantes - ${nombre}`, tablaHTML);
+            } else {
+                abrirModal(`ℹ️ ${nombre}`, `
+                    <div style="padding: 24px; text-align: center; color: #6b7280;">
+                        <div style="font-size: 48px; margin-bottom: 12px;">✅</div>
+                        <div style="font-size: 18px; font-weight: 700; color: #16a34a;">Unidad al 100%</div>
+                        <div style="margin-top: 8px;">No hay contratos faltantes</div>
+                    </div>
+                `);
+            }
+        }
+
+        document.getElementById('modalOverlay').addEventListener('click', function(e) {
+            if (e.target === this) cerrarModal();
+        });
+
+        // GRÁFICA
+        const ctx = document.getElementById('chartEvolucion').getContext('2d');
+        chartInstance = new Chart(ctx, {
             type: 'line',
             data: {
                 labels: ['SEP', 'OCT', 'NOV', 'DIC', 'ENE'],
-                datasets: [{
-                    label: '% Captura',
-                    data: [75.8, 79.4, 86.3, 91, 95],
-                    borderColor: '#22c55e',
-                    backgroundColor: 'rgba(34, 197, 94, 0.1)',
-                    borderWidth: 3,
-                    fill: true,
-                    tension: 0.3,
-                    pointBackgroundColor: [
-                        'rgba(34, 197, 94, 0.3)',
-                        'rgba(34, 197, 94, 0.3)',
-                        '#22c55e',
-                        'rgba(34, 197, 94, 0.2)',
-                        'rgba(34, 197, 94, 0.2)'
-                    ],
-                    pointRadius: [5, 5, 8, 4, 4],
-                    segment: {
-                        borderDash: ctx => ctx.p0DataIndex >= 2 ? [6, 3] : undefined
+                datasets: [
+                    {
+                        label: '% Captura',
+                        data: [75.4, 79.3, 86.3, 91.0, 95.0],
+                        borderColor: '#22c55e',
+                        backgroundColor: (ctx) => ctx.dataIndex <= 2 ? 'rgba(34, 197, 94, 0.12)' : 'rgba(34, 197, 94, 0.05)',
+                        borderWidth: 2.5,
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 5,
+                        pointHoverRadius: 8,
+                        segment: {
+                            borderDash: ctx => ctx.p0DataIndex >= 2 ? [6, 3] : undefined
+                        }
+                    },
+                    {
+                        label: 'Pendientes Totales',
+                        data: [116, 101, 94, 70, 45],
+                        borderColor: '#ef4444',
+                        backgroundColor: (ctx) => ctx.dataIndex <= 2 ? 'rgba(239, 68, 68, 0.08)' : 'rgba(239, 68, 68, 0.04)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.3,
+                        yAxisID: 'y1',
+                        pointRadius: 4,
+                        pointHoverRadius: 7,
+                        segment: {
+                            borderDash: ctx => ctx.p0DataIndex >= 2 ? [6, 3] : undefined
+                        }
                     }
-                }]
+                ]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: { display: false },
+                    legend: {
+                        display: true,
+                        position: 'bottom',
+                        labels: {
+                            padding: 16,
+                            font: { size: 12, weight: 600 }
+                        }
+                    },
                     tooltip: {
                         backgroundColor: 'rgba(17, 24, 39, 0.95)',
                         padding: 12,
@@ -1170,7 +1676,14 @@
                     y: {
                         min: 0,
                         max: 120,
-                        ticks: { font: { size: 11 }, color: '#6b7280' }
+                        ticks: { font: { size: 11 }, color: '#6b7280' },
+                        title: { display: true, text: '% Captura', font: { size: 12, weight: 700 } }
+                    },
+                    y1: {
+                        position: 'right',
+                        grid: { drawOnChartArea: false },
+                        ticks: { font: { size: 11 }, color: '#6b7280' },
+                        title: { display: true, text: 'Pendientes', font: { size: 12, weight: 700 } }
                     },
                     x: {
                         grid: { display: false },
@@ -1180,11 +1693,9 @@
             }
         });
 
-        actualizarDashboard();
-        
-        document.getElementById('modal').addEventListener('click', e => {
-            if (e.target.id === 'modal') cerrarModal();
-        });
+        setTimeout(() => {
+            document.getElementById('progressBar').style.width = '86.3%';
+        }, 300);
     </script>
 </body>
 </html>
