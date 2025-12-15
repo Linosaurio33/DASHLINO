@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DASHLINO - Dashboard Ejecutivo | Grupo México</title>
+    <meta name="description" content="Sistema de Análisis y Control de Contratistas">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            color: #1f2937;
+        }
+        .loading { position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                  background: rgba(255,255,255,0.95); display: none; align-items: center;
+                  justify-content: center; z-index: 9999; }
+        .loading.active { display: flex; }
+        .spinner { width: 40px; height: 40px; border: 3px solid #f3f4f6;
+                  border-top-color: #22c55e; border-radius: 50%;
+                  animation: spin 0.6s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); }}
+        .header { background: linear-gradient(135deg, #111827 0%, #1f2937 100%);
+                 color: white; padding: 20px 40px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        .header-content { max-width: 1400px; margin: 0 auto; display: flex;
+                         justify-content: space-between; align-items: center; }
+        .brand { font-size: 28px; font-weight: 900;
+                background: linear-gradient(135deg, #fff 0%, #d1d5db 100%);
+                -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .subtitle { font-size: 12px; color: #9ca3af; margin-top: 4px; }
+        .mes-selector { max-width: 1400px; margin: 0 auto; padding: 20px 40px 0;
+                       display: flex; gap: 12px; }
+        .mes-tab { flex: 1; background: white; border: 2px solid #e5e7eb;
+                  border-radius: 10px; padding: 14px; cursor: pointer;
+                  transition: all 0.2s; text-align: center; }
+        .mes-tab:hover { transform: translateY(-2px); }
+        .mes-tab.active { background: linear-gradient(135deg, #111827 0%, #1f2937 100%); }
+        .mes-nombre { font-size: 11px; font-weight: 600; color: #6b7280;
+                     text-transform: uppercase; margin-bottom: 6px; }
+        .mes-tab.active .mes-nombre { color: #9ca3af; }
+        .mes-valor { font-size: 22px; font-weight: 800; color: #111827; }
+        .mes-tab.active .mes-valor { color: white; }
+        .body { max-width: 1400px; margin: 0 auto; padding: 24px 40px; }
+        .kpi-hero { background: white; border: 2px solid #e5e7eb; border-radius: 14px;
+                   padding: 32px; margin-bottom: 24px; }
+        .kpi-label { font-size: 13px; font-weight: 700; color: #6b7280;
+                    text-transform: uppercase; margin-bottom: 16px; }
+        .kpi-value { font-size: 64px; font-weight: 900; color: #111827;
+                    line-height: 1; margin-bottom: 20px; }
+        .progress-bar { width: 100%; height: 10px; background: #f3f4f6;
+                       border-radius: 5px; margin-bottom: 14px; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #22c55e 0%, #16a34a 100%);
+                        border-radius: 5px; transition: width 1.2s ease; }
+        .stats-grid { display: grid; grid-template-columns: repeat(5, 1fr);
+                     gap: 16px; margin-bottom: 24px; }
+        .stat-card { background: white; border-radius: 10px; padding: 20px;
+                    border: 2px solid #e5e7eb; transition: all 0.2s; cursor: pointer; }
+        .stat-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
+        .stat-number { font-size: 32px; font-weight: 900; color: #111827; margin-bottom: 8px; }
+        .stat-label { font-size: 12px; font-weight: 700; color: #374151;
+                     text-transform: uppercase; margin-bottom: 4px; }
+        .stat-detail { font-size: 11px; color: #6b7280; }
+        .concentracion { background: white; border: 2px solid #fef3c7; border-radius: 14px;
+                        padding: 24px; margin-bottom: 24px;
+                        background: linear-gradient(135deg, #fff 0%, #fffbeb 100%); }
+        .concentracion-title { font-size: 18px; font-weight: 800; margin-bottom: 16px; }
+        .concentracion-bar { width: 100%; height: 36px; background: #f3f4f6;
+                            border-radius: 6px; overflow: hidden; margin-bottom: 14px; }
+        .concentracion-fill { height: 100%; background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%);
+                             display: flex; align-items: center; justify-content: center;
+                             font-size: 16px; font-weight: 800; color: white;
+                             transition: width 1.5s ease; }
+        .top4-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+        .top4-item { background: white; padding: 14px; border-radius: 8px;
+                    border: 2px solid #fde68a; cursor: pointer; transition: all 0.2s; }
+        .top4-item:hover { transform: translateY(-2px); border-color: #f59e0b; }
+        .top4-nombre { font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 6px; }
+        .top4-numero { font-size: 22px; font-weight: 800; color: #d97706; }
+        .chart-card { background: white; border: 2px solid #e5e7eb; border-radius: 14px;
+                     padding: 24px; margin-bottom: 24px; }
+        .chart-title { font-size: 18px; font-weight: 800; margin-bottom: 20px; }
+        .chart-container { height: 280px; position: relative; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                background: rgba(0,0,0,0.6); z-index: 1000; align-items: center;
+                justify-content: center; }
+        .modal.active { display: flex; }
+        .modal-content { background: white; border-radius: 14px; padding: 28px;
+                        max-width: 800px; width: 90%; max-height: 85vh; overflow-y: auto; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center;
+                       margin-bottom: 20px; padding-bottom: 14px; border-bottom: 2px solid #f3f4f6; }
+        .modal-title { font-size: 20px; font-weight: 800; }
+        .modal-close { width: 32px; height: 32px; border: none; background: #f3f4f6;
+                      border-radius: 6px; cursor: pointer; font-size: 18px; }
+        .modal-list { display: flex; flex-direction: column; gap: 10px; }
+        .modal-item { padding: 12px; background: #f9fafb; border-radius: 8px;
+                     border: 1px solid #e5e7eb; display: flex; justify-content: space-between; }
+        .badge { padding: 4px 10px; border-radius: 5px; font-size: 11px; font-weight: 700; }
+        .badge-ok { background: #dcfce7; color: #166534; }
+        .badge-warning { background: #fef3c7; color: #92400e; }
+        .badge-error { background: #fee2e2; color: #991b1b; }
+        .footer { max-width: 1400px; margin: 30px auto 0; padding: 0 40px 24px;
+                 text-align: center; font-size: 11px; color: #9ca3af; }
+        @media (max-width: 768px) {
+            .stats-grid { grid-template-columns: 1fr; }
+            .top4-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <div class="loading" id="loading">
+        <div style="text-align: center;">
+            <div class="spinner"></div>
+            <p style="margin-top: 12px; font-weight: 600; color: #6b7280;">Actualizando datos...</p>
+        </div>
+    </div>
+
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle"></h2>
+                <button class="modal-close" onclick="cerrarModal()">✕</button>
+            </div>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <div class="header">
+        <div class="header-content">
+            <div>
+                <div class="brand">DASHLINO</div>
+                <div class="subtitle">Sistema de Análisis y Control de Contratistas</div>
+            </div>
+            <div style="text-align: right;">
+                <div style="font-size: 14px; font-weight: 700;" id="mesActual">NOVIEMBRE 2025</div>
+                <div style="font-size: 10px; color: #9ca3af; margin-top: 2px;">Actualizado 15 Dic 2025</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mes-selector" id="mesSelector"></div>
+
+    <div class="body">
+        <div class="kpi-hero">
+            <div class="kpi-label">🎯 TASA DE CAPTURA GLOBAL</div>
+            <div class="kpi-value" id="capturaGlobal">86.3%</div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar" style="width: 86.3%"></div>
+            </div>
+        </div>
+
+        <div class="stats-grid" id="statsGrid"></div>
+
+        <div class="concentracion">
+            <div class="concentracion-title">🎯 Enfoque Estratégico (Principio 80/20)</div>
+            <div class="concentracion-bar">
+                <div class="concentracion-fill" id="concentracionFill"></div>
+            </div>
+            <div class="top4-grid" id="top4Grid"></div>
+            <div style="margin-top: 14px; padding: 10px; background: #fef3c7; border-radius: 6px;
+                       text-align: center; font-size: 13px; font-weight: 600; color: #92400e;">
+                💡 Enfoque estratégico: Priorizar estas 4 unidades genera el mayor impacto
+            </div>
+        </div>
+
+        <div class="chart-card">
+            <div class="chart-title">📈 Evolución Trimestral + Proyección</div>
+            <div class="chart-container">
+                <canvas id="chart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div style="margin-bottom: 8px; height: 1px; background: linear-gradient(90deg, transparent 0%, #e5e7eb 50%, transparent 100%);"></div>
+        DASHLINO © 2025 • Grupo México • Sistema de Control de Contratistas
+    </div>
+
+    <script>
+        const DATOS = {"SEP":{"unidades":[{"nombre":"ANGANGUEO","padron":0,"estado_fuerza":1,"capturados":0,"faltantes":1,"captura":0.0},{"nombre":"CANANEA","padron":238,"estado_fuerza":116,"capturados":116,"faltantes":0,"captura":1.0},{"nombre":"CHARCAS","padron":32,"estado_fuerza":36,"capturados":29,"faltantes":7,"captura":0.806},{"nombre":"EL ARCO, B.C.","padron":0,"estado_fuerza":2,"capturados":0,"faltantes":2,"captura":0.0},{"nombre":"ESTACION SANTIAGO","padron":0,"estado_fuerza":1,"capturados":0,"faltantes":1,"captura":0.0},{"nombre":"FUNDICION","padron":197,"estado_fuerza":109,"capturados":91,"faltantes":18,"captura":0.835},{"nombre":"LA CARIDAD","padron":91,"estado_fuerza":68,"capturados":42,"faltantes":26,"captura":0.618},{"nombre":"NUEVA ROSITA","padron":0,"estado_fuerza":2,"capturados":0,"faltantes":2,"captura":0.0},{"nombre":"OFICINAS MEXICO","padron":0,"estado_fuerza":1,"capturados":0,"faltantes":1,"captura":0.0},{"nombre":"PARQUE BICENTENARIO","padron":0,"estado_fuerza":1,"capturados":0,"faltantes":1,"captura":0.0},{"nombre":"PARQUE ECOLOGICO ANTIGUA PLANTA MONTERREY","padron":0,"estado_fuerza":1,"capturados":0,"faltantes":1,"captura":0.0},{"nombre":"PLANTA DE CAL","padron":0,"estado_fuerza":5,"capturados":0,"faltantes":5,"captura":0.0},{"nombre":"PLANTA DE COBRE","padron":0,"estado_fuerza":9,"capturados":0,"faltantes":9,"captura":0.0},{"nombre":"PLANTA DE ZINC","padron":32,"estado_fuerza":24,"capturados":19,"faltantes":5,"captura":0.792},{"nombre":"PLANTA TRATADORA DE AGUAS RESIDUALES ZINC","padron":0,"estado_fuerza":1,"capturados":0,"faltantes":1,"captura":0.0},{"nombre":"SAN MARTIN","padron":46,"estado_fuerza":47,"capturados":39,"faltantes":8,"captura":0.83},{"nombre":"SANTA BARBARA","padron":45,"estado_fuerza":47,"capturados":27,"faltantes":20,"captura":0.574},{"nombre":"SANTA EULALIA","padron":0,"estado_fuerza":3,"capturados":0,"faltantes":3,"captura":0.0},{"nombre":"SN MARTIN (CHALCHIHUITES)","padron":0,"estado_fuerza":1,"capturados":0,"faltantes":1,"captura":0.0},{"nombre":"TALLER CENTRAL","padron":0,"estado_fuerza":3,"capturados":0,"faltantes":3,"captura":0.0},{"nombre":"TAXCO","padron":0,"estado_fuerza":1,"capturados":0,"faltantes":1,"captura":0.0}],"totales":{"padron":681,"estado_fuerza":479,"capturados":363,"faltantes":116,"captura":75.8}},"OCT":{"unidades":[{"nombre":"ANGANGUEO","padron":1,"estado_fuerza":1,"capturados":1,"faltantes":0,"captura":1.0},{"nombre":"CANANEA","padron":241,"estado_fuerza":121,"capturados":121,"faltantes":0,"captura":1.0},{"nombre":"CHARCAS","padron":32,"estado_fuerza":35,"capturados":27,"faltantes":8,"captura":0.7714},{"nombre":"EL ARCO, B.C.","padron":0,"estado_fuerza":2,"capturados":0,"faltantes":2,"captura":0.0},{"nombre":"ESTACION SANTIAGO","padron":1,"estado_fuerza":1,"capturados":1,"faltantes":0,"captura":1.0},{"nombre":"FUNDICION","padron":206,"estado_fuerza":119,"capturados":104,"faltantes":15,"captura":0.8739},{"nombre":"LA CARIDAD","padron":137,"estado_fuerza":67,"capturados":47,"faltantes":20,"captura":0.7015},{"nombre":"NUEVA ROSITA","padron":0,"estado_fuerza":2,"capturados":0,"faltantes":2,"captura":0.0},{"nombre":"OFICINAS MEXICO","padron":0,"estado_fuerza":1,"capturados":0,"faltantes":1,"captura":0.0},{"nombre":"PARQUE BICENTENARIO","padron":0,"estado_fuerza":1,"capturados":0,"faltantes":1,"captura":0.0},{"nombre":"PARQUE ECOLOGICO ANTIGUA PLANTA MONTERREY","padron":0,"estado_fuerza":1,"capturados":0,"faltantes":1,"captura":0.0},{"nombre":"PLANTA DE CAL","padron":4,"estado_fuerza":3,"capturados":1,"faltantes":2,"captura":0.3333},{"nombre":"PLANTA DE COBRE","padron":2,"estado_fuerza":9,"capturados":0,"faltantes":9,"captura":0.0},{"nombre":"PLANTA DE ZINC","padron":36,"estado_fuerza":27,"capturados":22,"faltantes":5,"captura":0.8148},{"nombre":"PLANTA TRATADORA DE AGUAS RESIDUALES ZINC","padron":0,"estado_fuerza":1,"capturados":0,"faltantes":1,"captura":0.0},{"nombre":"SAN MARTIN","padron":45,"estado_fuerza":43,"capturados":36,"faltantes":7,"captura":0.8372},{"nombre":"SANTA BARBARA","padron":44,"estado_fuerza":46,"capturados":27,"faltantes":19,"captura":0.587},{"nombre":"SANTA EULALIA","padron":0,"estado_fuerza":4,"capturados":0,"faltantes":4,"captura":0.0},{"nombre":"SN MARTIN (CHALCHIHUITES)","padron":0,"estado_fuerza":1,"capturados":0,"faltantes":1,"captura":0.0},{"nombre":"TALLER CENTRAL","padron":2,"estado_fuerza":4,"capturados":1,"faltantes":3,"captura":0.25},{"nombre":"TAXCO","padron":1,"estado_fuerza":1,"capturados":1,"faltantes":0,"captura":1.0}],"totales":{"padron":752,"estado_fuerza":490,"capturados":389,"faltantes":101,"captura":79.4}},"NOV":{"unidades":[{"nombre":"ANGANGUEO","padron":1,"estado_fuerza":1,"capturados":1,"faltantes":0,"captura":1.0},{"nombre":"CANANEA","padron":252,"estado_fuerza":122,"capturados":122,"faltantes":0,"captura":1.0},{"nombre":"CHARCAS","padron":43,"estado_fuerza":39,"capturados":39,"faltantes":0,"captura":1.0},{"nombre":"EL ARCO, B.C.","padron":0,"estado_fuerza":2,"capturados":2,"faltantes":0,"captura":1.0},{"nombre":"ESTACION SANTIAGO","padron":1,"estado_fuerza":1,"capturados":1,"faltantes":0,"captura":1.0},{"nombre":"FUNDICION","padron":209,"estado_fuerza":102,"capturados":89,"faltantes":13,"captura":0.8725},{"nombre":"LA CARIDAD","padron":128,"estado_fuerza":57,"capturados":42,"faltantes":15,"captura":0.7368},{"nombre":"NUEVA ROSITA","padron":0,"estado_fuerza":2,"capturados":2,"faltantes":0,"captura":1.0},{"nombre":"OFICINAS MEXICO","padron":0,"estado_fuerza":1,"capturados":0,"faltantes":1,"captura":0.0},{"nombre":"PARQUE BICENTENARIO","padron":1,"estado_fuerza":1,"capturados":1,"faltantes":0,"captura":1.0},{"nombre":"PARQUE ECOLOGICO ANTIGUA PLANTA MONTERREY","padron":1,"estado_fuerza":1,"capturados":1,"faltantes":0,"captura":1.0},{"nombre":"PLANTA DE CAL","padron":4,"estado_fuerza":5,"capturados":2,"faltantes":3,"captura":0.4},{"nombre":"PLANTA DE COBRE","padron":4,"estado_fuerza":9,"capturados":1,"faltantes":8,"captura":0.1111},{"nombre":"PLANTA DE ZINC","padron":41,"estado_fuerza":32,"capturados":32,"faltantes":0,"captura":1.0},{"nombre":"PLANTA TRATADORA DE AGUAS RESIDUALES ZINC","padron":1,"estado_fuerza":1,"capturados":1,"faltantes":0,"captura":1.0},{"nombre":"SAN MARTIN","padron":52,"estado_fuerza":44,"capturados":44,"faltantes":0,"captura":1.0},{"nombre":"SANTA BARBARA","padron":42,"estado_fuerza":48,"capturados":22,"faltantes":26,"captura":0.4583},{"nombre":"SANTA EULALIA","padron":0,"estado_fuerza":4,"capturados":4,"faltantes":0,"captura":1.0},{"nombre":"SN MARTIN (CHALCHIHUITES)","padron":1,"estado_fuerza":1,"capturados":1,"faltantes":0,"captura":1.0},{"nombre":"TALLER CENTRAL","padron":6,"estado_fuerza":5,"capturados":5,"faltantes":0,"captura":1.0},{"nombre":"TAXCO","padron":0,"estado_fuerza":1,"capturados":1,"faltantes":0,"captura":1.0},{"nombre":"ZINC VIVERO DIDACTIVO","padron":1,"estado_fuerza":1,"capturados":1,"faltantes":0,"captura":1.0},{"nombre":"ZINC VIVERO FORESTAL","padron":1,"estado_fuerza":1,"capturados":1,"faltantes":0,"captura":1.0}],"totales":{"padron":789,"estado_fuerza":481,"capturados":415,"faltantes":66,"captura":86.3}}};
+
+        let mesActual = 'NOV';
+        let chart = null;
+
+        function cambiarMes(mes) {
+            document.getElementById('loading').classList.add('active');
+            setTimeout(() => {
+                mesActual = mes;
+                document.querySelectorAll('.mes-tab').forEach(t => t.classList.remove('active'));
+                event.target.closest('.mes-tab').classList.add('active');
+                actualizarDashboard();
+                document.getElementById('loading').classList.remove('active');
+            }, 200);
+        }
+
+        function actualizarDashboard() {
+            const datos = DATOS[mesActual];
+            const meses = {SEP: 'SEPTIEMBRE 2025', OCT: 'OCTUBRE 2025', NOV: 'NOVIEMBRE 2025'};
+            
+            document.getElementById('mesActual').textContent = meses[mesActual];
+            document.getElementById('capturaGlobal').textContent = datos.totales.captura + '%';
+            document.getElementById('progressBar').style.width = datos.totales.captura + '%';
+            
+            const ordenadas = [...datos.unidades].sort((a,b) => b.faltantes - a.faltantes);
+            const top4 = ordenadas.slice(0, 4);
+            const suma = top4.reduce((s, u) => s + u.faltantes, 0);
+            const pct = ((suma / datos.totales.faltantes) * 100).toFixed(1);
+            const u100 = datos.unidades.filter(u => u.captura === 1.0).length;
+            
+            document.getElementById('statsGrid').innerHTML = `
+                <div class="stat-card" onclick="mostrar100()">
+                    <div class="stat-number">${u100}</div>
+                    <div class="stat-label">Unidades 100%</div>
+                    <div class="stat-detail">${((u100/datos.unidades.length)*100).toFixed(0)}% del total</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${datos.totales.faltantes}</div>
+                    <div class="stat-label">Pendientes</div>
+                    <div class="stat-detail">Contratos faltantes</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${datos.totales.padron}</div>
+                    <div class="stat-label">PADRÓN</div>
+                    <div class="stat-detail">Registrados</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${suma}</div>
+                    <div class="stat-label">Top 4</div>
+                    <div class="stat-detail">${pct}% problema</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${datos.unidades.length}</div>
+                    <div class="stat-label">Unidades</div>
+                    <div class="stat-detail">En operación</div>
+                </div>
+            `;
+            
+            document.getElementById('concentracionFill').style.width = pct + '%';
+            document.getElementById('concentracionFill').textContent = `${pct}% EN TOP 4 (${suma}/${datos.totales.faltantes})`;
+            
+            document.getElementById('top4Grid').innerHTML = top4.map((u, i) => `
+                <div class="top4-item">
+                    <div class="top4-nombre">${i+1}. ${u.nombre}</div>
+                    <div class="top4-numero">${u.faltantes}</div>
+                </div>
+            `).join('');
+        }
+
+        function mostrar100() {
+            const lista = DATOS[mesActual].unidades
+                .filter(u => u.captura === 1.0)
+                .map(u => `<div class="modal-item"><span>${u.nombre}</span><span class="badge badge-ok">100%</span></div>`)
+                .join('');
+            abrirModal('✅ Unidades al 100%', `<div class="modal-list">${lista}</div>`);
+        }
+
+        function abrirModal(titulo, contenido) {
+            document.getElementById('modalTitle').textContent = titulo;
+            document.getElementById('modalBody').innerHTML = contenido;
+            document.getElementById('modal').classList.add('active');
+        }
+
+        function cerrarModal() {
+            document.getElementById('modal').classList.remove('active');
+        }
+
+        document.getElementById('mesSelector').innerHTML = ['SEP', 'OCT', 'NOV'].map(m => `
+            <div class="mes-tab ${m === 'NOV' ? 'active' : ''}" onclick="cambiarMes('${m}')">
+                <div class="mes-nombre">${{SEP: 'Septiembre', OCT: 'Octubre', NOV: 'Noviembre'}[m]}</div>
+                <div class="mes-valor">${DATOS[m].totales.captura}%</div>
+            </div>
+        `).join('');
+
+        const ctx = document.getElementById('chart').getContext('2d');
+        chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['SEP', 'OCT', 'NOV', 'DIC', 'ENE'],
+                datasets: [{
+                    label: '% Captura',
+                    data: [75.8, 79.4, 86.3, 91, 95],
+                    borderColor: '#22c55e',
+                    backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.3
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false }},
+                scales: { y: { min: 0, max: 120 }}
+            }
+        });
+
+        actualizarDashboard();
+        document.getElementById('modal').addEventListener('click', e => {
+            if (e.target.id === 'modal') cerrarModal();
+        });
+    </script>
+</body>
+</html>
